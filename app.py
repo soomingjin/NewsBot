@@ -107,7 +107,7 @@ def send_postback_button(recipient_id):
                         "url": "https://petersapparel.parseapp.com"
                     },
                 {
-                    "payload": "USER_DEFINED_PAYLOAD",
+                    "payload": "Look",
                     "title": "Start Chatting",
                     "type": "postback"
                 }
