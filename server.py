@@ -50,8 +50,9 @@ def webhook():
                 if messaging_event.get("postback"):
                     sender_id = messaging_event["sender"]["id"]
                     recipient_id = messaging_event["recipient"]["id"]
-                    payload = messaging_event["postback"]["payload"]  # user clicked/tapped "postback" button in earlier message
-                    received_postback(sender_id, payload)
+                    payload = messaging_event["postback"]["payload"]
+                    print ""
+                    received_postback(sender_id, recipient_id, payload)
 
     return "ok", 200
 
@@ -79,11 +80,11 @@ def send_message(recipient_id, message_text):
         log(r.status_code)
         log(r.text)
 
-def received_postback(sender_id, payload):
+def received_postback(sender_id, recipient_id, payload):
 	log("received postback from {recipient} with payload {payload}".format(recipient = recipient_id, payload = payload))
 
-	if payload == "Get Started":
-		send_message(sender_id, "Welcome to NewsBot! First, choose your political views!")
+	if payload == 'Get Started':
+		send_message(sender_id, "Welcome to NewsBot! First, choose what you'll like to read")
 
 	else:
 		send_message(sender_id, "Postback recieved")
