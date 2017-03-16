@@ -88,10 +88,50 @@ def received_postback(event):
     log("received postback from {recipient} with payload {payload}".format(recipient = recipient_id, payload = payload))
 
     if payload == "Get Started":
-        send_message(sender_id, "Welcome to NewsBot! First, choose your political views!")
+        send_message(sender_id, "Welcome to NewsBot! Choose some topics that you're interested in!")
+        send_postback_button(recipient_id)
 
     else:
         send_message(sender_id, "Postback recieved")
+
+def send_postback_button(recipient_id):
+    log("sending postback message to {recipient}".format(recipient = recipient_id))
+    data = json.dumps({
+        "message": {
+            "attachment": {
+                "payload": {
+                    "buttons": [
+                    {   
+                        "title": "Show Website",
+                        "type": "web_url",
+                        "url": "https://petersapparel.parseapp.com"
+                    },
+                {
+                    "payload": "USER_DEFINED_PAYLOAD",
+                    "title": "Start Chatting",
+                    "type": "postback"
+                }
+            ],
+            "template_type": "button",
+            "text": "What do you want to do next?"
+          },
+          "type": "template"
+        }
+      },
+      "recipient": {
+        "id": "USER_ID"
+      }
+    })
+    params = {
+        "access_token": os.environ["PAGE_ACCESS_TOKEN"]
+    }
+    headers = {
+        "Content-Type": "application/json"
+    }
+    r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=data)
+    if r.status_code != 200:
+        log(r.status_code)
+        log(r.text)
 
 def log(message):  # simple wrapper for logging to stdout on heroku
     print str(message)
