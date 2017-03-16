@@ -37,8 +37,9 @@ def webhook():
 
                     sender_id = messaging_event["sender"]["id"]        # the facebook ID of the person sending you the message
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
-                    message_text = messaging_event["message"]["text"]  # the message's text
-
+                    message_text = messaging_event["message"]["text"]
+                    if (int(message_text)):
+                        send_message(sender_id, "You only have %i minutes to read?" % (int(message_text)))  # the message's text
                     send_message(sender_id, "got it, thanks!")
 
                 if messaging_event.get("delivery"):  # delivery confirmation
@@ -79,6 +80,11 @@ def send_message(recipient_id, message_text):
         log(r.status_code)
         log(r.text)
 
+def time_spent_reading(recipient_id):
+    log("sending message to {recipient}".format(recipient = recipient_id))
+    send_message(sender_id, "How much time do you have to read news articles?")
+
+
 def received_postback(event):
 
     sender_id = event["sender"]["id"]
@@ -90,6 +96,7 @@ def received_postback(event):
     if payload == "Get Started":
         send_message(sender_id, "Welcome to NewsBot! Choose some topics that you're interested in!")
         send_postback_button(sender_id)
+        time_spent_reading(sender_id)
 
     else:
         send_message(sender_id, "Postback recieved")
