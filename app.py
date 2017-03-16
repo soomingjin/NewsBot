@@ -89,7 +89,7 @@ def received_postback(event):
 
     if payload == "Get Started":
         send_message(sender_id, "Welcome to NewsBot! Choose some topics that you're interested in!")
-        send_postback_button(sender_id)
+        send_postback_button(recipient_id)
 
     else:
         send_message(sender_id, "Postback recieved")
@@ -119,7 +119,7 @@ def send_postback_button(recipient_id):
         }
       },
       "recipient": {
-        "id": "USER_ID"
+        "id": recipient_id
       }
     })
     params = {
