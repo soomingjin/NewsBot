@@ -48,7 +48,10 @@ def webhook():
                     pass
 
                 if messaging_event.get("postback"):  # user clicked/tapped "postback" button in earlier message
-                    pass
+                    received_postback(messaging_event)
+
+                else:
+                    log("Webhook return unknown event " + messaging_event)
 
     return "ok", 200
 
@@ -76,6 +79,19 @@ def send_message(recipient_id, message_text):
         log(r.status_code)
         log(r.text)
 
+def received_postback(event):
+
+    sender_id = event["sender"]["id"]
+    recipient_id = event["recipient"]["id"]
+
+    payload = event["postback"]["payload"]
+    log("received postback from {recipient} with payload {payload}".format(recipient = recipient_id, payload = payload))
+
+    if payload == "Get Started":
+        send_message(sender_id, "Welcome to NewsBot! First, choose your political views!")
+
+    else:
+        send_message(sender_id, "Postback recieved")
 
 def log(message):  # simple wrapper for logging to stdout on heroku
     print str(message)
