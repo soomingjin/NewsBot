@@ -51,8 +51,7 @@ def webhook():
                     sender_id = messaging_event["sender"]["id"]
                     recipient_id = messaging_event["recipient"]["id"]
                     payload = messaging_event["postback"]["payload"]
-                    print payload
-                    received_postback(sender_id, recipient_id, payload)
+                    send_message(sender_id, payload)
 
     return "ok", 200
 
