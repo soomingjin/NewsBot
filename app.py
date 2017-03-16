@@ -37,9 +37,7 @@ def webhook():
 
                     sender_id = messaging_event["sender"]["id"]        # the facebook ID of the person sending you the message
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
-                    message_text = messaging_event["message"]["text"]
-                    if (int(message_text)):
-                        send_message(sender_id, "You only have %i minutes to read?" % (int(message_text)))  # the message's text
+                    message_text = messaging_event["message"]["text"]  # the message's text
                     send_message(sender_id, "got it, thanks!")
 
                 if messaging_event.get("delivery"):  # delivery confirmation
@@ -56,17 +54,22 @@ def webhook():
 
     return "ok", 200
 
-
-def send_message(recipient_id, message_text):
-
-    log("sending message to {recipient}: {text}".format(recipient=recipient_id, text=message_text))
-
+def call_send_api(message_data):
     params = {
         "access_token": os.environ["PAGE_ACCESS_TOKEN"]
     }
     headers = {
         "Content-Type": "application/json"
     }
+    r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=message_data)
+    if r.status_code != 200:
+        log(r.status_code)
+        log(r.text)
+
+def send_message(recipient_id, message_text):
+
+    log("sending message to {recipient}: {text}".format(recipient=recipient_id, text=message_text))
+
     data = json.dumps({
         "recipient": {
             "id": recipient_id
@@ -75,10 +78,7 @@ def send_message(recipient_id, message_text):
             "text": message_text
         }
     })
-    r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=data)
-    if r.status_code != 200:
-        log(r.status_code)
-        log(r.text)
+    call_send_api(data)
 
 def time_spent_reading(recipient_id):
     log("sending message to {recipient}".format(recipient = recipient_id))
@@ -96,7 +96,6 @@ def received_postback(event):
     if payload == "Get Started":
         send_message(sender_id, "Welcome to NewsBot! Choose some topics that you're interested in!")
         send_postback_button(sender_id)
-        time_spent_reading(sender_id)
 
     else:
         send_message(sender_id, "Postback recieved")
@@ -129,16 +128,7 @@ def send_postback_button(recipient_id):
         "id": recipient_id
       }
     })
-    params = {
-        "access_token": os.environ["PAGE_ACCESS_TOKEN"]
-    }
-    headers = {
-        "Content-Type": "application/json"
-    }
-    r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=data)
-    if r.status_code != 200:
-        log(r.status_code)
-        log(r.text)
+    call_send_api(data)
 
 def log(message):  # simple wrapper for logging to stdout on heroku
     print str(message)
