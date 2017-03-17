@@ -54,22 +54,17 @@ def webhook():
 
     return "ok", 200
 
-def call_send_api(message_data):
+
+def send_message(recipient_id, message_text):
+
+    log("sending message to {recipient}: {text}".format(recipient=recipient_id, text=message_text))
+
     params = {
         "access_token": os.environ["PAGE_ACCESS_TOKEN"]
     }
     headers = {
         "Content-Type": "application/json"
     }
-    r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=message_data)
-    if r.status_code != 200:
-        log(r.status_code)
-        log(r.text)
-
-def send_message(recipient_id, message_text):
-
-    log("sending message to {recipient}: {text}".format(recipient=recipient_id, text=message_text))
-
     data = json.dumps({
         "recipient": {
             "id": recipient_id
@@ -78,7 +73,10 @@ def send_message(recipient_id, message_text):
             "text": message_text
         }
     })
-    call_send_api(data)
+    r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=data)
+    if r.status_code != 200:
+        log(r.status_code)
+        log(r.text)
 
 def time_spent_reading(recipient_id):
     log("sending message to {recipient}".format(recipient = recipient_id))
@@ -128,7 +126,16 @@ def send_postback_button(recipient_id):
         "id": recipient_id
       }
     })
-    call_send_api(data)
+    params = {
+        "access_token": os.environ["PAGE_ACCESS_TOKEN"]
+    }
+    headers = {
+        "Content-Type": "application/json"
+    }
+    r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=data)
+    if r.status_code != 200:
+        log(r.status_code)
+        log(r.text)
 
 def log(message):  # simple wrapper for logging to stdout on heroku
     print str(message)
