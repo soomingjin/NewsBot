@@ -106,18 +106,22 @@ def send_postback_button(recipient_id):
                 "payload": {
                     "buttons": [
                     {   
-                        "title": "Show Website",
-                        "type": "web_url",
-                        "url": "https://petersapparel.parseapp.com"
+                        "payload": "Tech",
+                        "type": "postback",
+                        "title": "Tech"
                     },
                 {
-                    "payload": "Look",
-                    "title": "Start Chatting",
+                    "payload": "Politics",
+                    "title": "Politics",
                     "type": "postback"
-                }
+                }, 
+                { "payload": "Global Affairs",
+                  "title": "Global Affairs",
+                  "type": "postback"
+                },
             ],
             "template_type": "button",
-            "text": "What do you want to do next?"
+            "text": "What categories are you interested in?"
           },
           "type": "template"
         }
