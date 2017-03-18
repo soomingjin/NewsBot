@@ -4,9 +4,11 @@ import json
 
 import requests
 from flask import Flask, request
+from newspaper import Newspaper
 
 app = Flask(__name__)
 
+testclass = Newspaper()
 
 @app.route('/', methods=['GET'])
 def verify():
@@ -95,8 +97,15 @@ def received_postback(event):
         send_message(sender_id, "Welcome to NewsBot! Choose some topics that you're interested in!")
         send_postback_button(sender_id)
 
+    if payload == "Tech":
+        send_message(sender_id, responseTech())
+
     else:
         send_message(sender_id, "Postback recieved")
+
+def responseTech():
+    testclass.build_object()
+    testclass.show_result()
 
 def send_postback_button(recipient_id):
     log("sending postback message to {recipient}".format(recipient = recipient_id))
