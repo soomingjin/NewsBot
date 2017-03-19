@@ -4,7 +4,7 @@ import json
 
 import requests
 from flask import Flask, request
-from newspaper import Newspaper
+from testetetse import Test
 
 app = Flask(__name__)
 testclass = Newspaper("Tech")
