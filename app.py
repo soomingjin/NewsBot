@@ -97,16 +97,8 @@ def received_postback(event):
         send_postback_button(sender_id)
 
     elif payload == "Tech":
-        testclass = newspaper.build("http://cnn.com")
-        regex_pattern = re.compile("tech")
-        for category in testclass.category_urls():
-            if (regex_pattern.match(category)):
-                testclass = newspaper.build(re.sub(r"^u\'", "", category))
-        log("recieved")
-        finalresult = testclass.articles[0].download()
-        parsedresult = finalresult.parse()
-        toreturn = parsedresult.text
-        send_message(sender_id, toreturn)
+        
+        send_message(sender_id, "You chose tech!")
 
     else:
         send_message(sender_id, "Postback recieved")
