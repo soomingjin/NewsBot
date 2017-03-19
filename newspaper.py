@@ -1,7 +1,7 @@
 import newspaper
 import re
 
-class Newspaper(self):
+class Newspaper:
   def __init__(self, category):
     self.sources = newspaper.build("http://cnn.com")
     self.category = category
