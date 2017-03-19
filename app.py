@@ -37,12 +37,8 @@ def webhook():
                     sender_id = messaging_event["sender"]["id"]        # the facebook ID of the person sending you the message
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
                     message_text = messaging_event["message"]["text"]  # the message's text
-                    if (message_text.isdigit()):
-                        send_message(sender_id, "You have %s minutes to read? That's short!" % message_text)
-                        send_generic_template(sender_id)
-                        
-                    else:
-                        send_message(sender_id, "got it, thanks!")
+                    send_message(sender_id, "You have %s minutes to read? That's short!" % message_text)
+                    send_generic_template(sender_id)
 
                 if messaging_event.get("delivery"):  # delivery confirmation
                     pass
@@ -99,6 +95,7 @@ def received_postback(event):
 
     else:
         send_message(sender_id, "Postback recieved")
+
 def send_generic_template(recipient_id):
     log("sending postback message to {recipient}".format(recipient = recipient_id))
     data = json.dumps({
