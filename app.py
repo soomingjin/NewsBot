@@ -39,7 +39,7 @@ def webhook():
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
                     message_text = messaging_event["message"]["text"]  # the message's text
                     if (message_text.isdigit()):
-                        send_message("You have %s minutes to read? That's short!" % message_text)
+                        send_message(sender_id, "You have %s minutes to read? That's short!" % message_text)
                         send_postback_button(sender_id)
                     else:
                         send_message(sender_id, "got it, thanks!")
