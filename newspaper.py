@@ -7,7 +7,7 @@ class Newspaper:
     self.category = category
 
   def build_object(self):
-    regex_pattern = re.compile(r"tech\d+")
+    regex_pattern = re.compile("tech")
     for self.category in sources.category_urls():
       if (regex_pattern.match(self.category)):
         self.sources = newspaper.build(re.sub(r"^u\'", "", category))
