@@ -7,7 +7,7 @@ from flask import Flask, request
 from testetetse import Test
 
 app = Flask(__name__)
-testclass = Newspaper("Tech")
+testclass = Test("Tech")
 testclass.build_object()
 result = testclass.show_result()
 
