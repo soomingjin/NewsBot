@@ -37,20 +37,20 @@ def webhook():
                     sender_id = messaging_event["sender"]["id"]        # the facebook ID of the person sending you the message
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
                     message_text = messaging_event["message"]["text"]  # the message's text
-                    if (message_text.isdigit() and messaging_event["message"]):
+                    if (message_text.isdigit()):
                         send_message(sender_id, "You have %s minutes to read? That's short!" % message_text)
                         send_generic_template(sender_id)
                         
                     else:
                         send_message(sender_id, "got it, thanks!")
 
-                if messaging_event.get("delivery"):  # delivery confirmation
+                elif messaging_event.get("delivery"):  # delivery confirmation
                     pass
 
-                if messaging_event.get("optin"):  # optin confirmation
+                elif messaging_event.get("optin"):  # optin confirmation
                     pass
 
-                if messaging_event.get("postback"):  # user clicked/tapped "postback" button in earlier message
+                elif messaging_event.get("postback"):  # user clicked/tapped "postback" button in earlier message
                     received_postback(messaging_event)
 
                 else:
