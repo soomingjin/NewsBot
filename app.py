@@ -7,9 +7,6 @@ from flask import Flask, request
 from testetetse import Test
 
 app = Flask(__name__)
-testclass = Test("Tech")
-testclass.build_object()
-result = testclass.show_result()
 
 @app.route('/', methods=['GET'])
 def verify():
@@ -99,6 +96,9 @@ def received_postback(event):
         send_postback_button(sender_id)
 
     elif payload == "Tech":
+        testclass = Test("Tech")
+        testclass.build_object()
+        result = testclass.show_result()
         send_message(sender_id, result)
 
     else:
