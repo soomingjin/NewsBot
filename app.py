@@ -4,7 +4,8 @@ import json
 
 import requests
 from flask import Flask, request
-from newspaper import Newspaper
+import newspaper
+import re
 
 app = Flask(__name__)
 
@@ -96,11 +97,16 @@ def received_postback(event):
         send_postback_button(sender_id)
 
     elif payload == "Tech":
-        testclass = Newspaper(payload)
+        testclass = newspaper.build("http://cnn.com")
+        regex_pattern = re.compile("tech")
+        for category in testclass.category_urls():
+            if (regex_pattern.match(category)):
+                testclass = newspaper.build(re.sub(r"^u\'", "", category))
         log("recieved")
-        testclass.build_object()
-        result = testclass.show_result()
-        send_message(sender_id, result)
+        finalresult = testclass.articles[0].download()
+        parsedresult = finalresult.parse()
+        toreturn = parsedresult.text
+        send_message(sender_id, toreturn)
 
     else:
         send_message(sender_id, "Postback recieved")
