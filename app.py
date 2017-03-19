@@ -8,8 +8,6 @@ from newspaper import Newspaper
 
 app = Flask(__name__)
 
-testclass = Newspaper()
-
 @app.route('/', methods=['GET'])
 def verify():
     # when the endpoint is registered as a webhook, it must echo back
@@ -98,12 +96,13 @@ def received_postback(event):
         send_postback_button(sender_id)
 
     if payload == "Tech":
-        send_message(sender_id, responseTech())
+        send_message(sender_id, responseTech(payload))
 
     else:
         send_message(sender_id, "Postback recieved")
 
-def responseTech():
+def responseTech(payload):
+    testclass = Newspaper(payload)
     testclass.build_object()
     testclass.show_result()
 
