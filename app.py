@@ -98,7 +98,13 @@ def received_postback(event):
 
     elif payload == "Tech":
         
-        send_message(sender_id, "You chose tech!")
+        send_message(sender_id, """Story highlights "They just don't want to be ridiculed," a parent says
+
+Over 275 people have signed a petition to change the school's name
+
+(CNN) Even before it opens, the Innovation Park Middle School has parents seeing red.
+
+They have a problem with its acronym: IPMS.""")
 
     else:
         send_message(sender_id, "Postback recieved")
