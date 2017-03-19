@@ -13,6 +13,7 @@ class Newspaper:
         self.sources = newspaper.build(re.sub(r"^u\'", "", category))
 
   def show_result(self):
-    finalresult = self.sources.articles[0].download().parse().text
-    finalresult = re.sub(r"^u\'","", finalresult)
-    return finalresult
+    finalresult = self.sources.articles[0].download()
+    parsedresult = finalresult.parse()
+    toreturn = parsedresult.text
+    return toreturn

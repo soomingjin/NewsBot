@@ -103,6 +103,7 @@ def received_postback(event):
 
 def responseTech(payload):
     testclass = Newspaper(payload)
+    log("recieved")
     testclass.build_object()
     testclass.show_result()
 
