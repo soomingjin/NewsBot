@@ -40,7 +40,8 @@ def webhook():
                     message_text = messaging_event["message"]["text"]  # the message's text
                     if (message_text.isdigit()):
                         send_message(sender_id, "You have %s minutes to read? That's short!" % message_text)
-                        send_postback_button(sender_id)
+                        send_generic_template(sender_id)
+                        
                     else:
                         send_message(sender_id, "got it, thanks!")
 
@@ -95,11 +96,10 @@ def received_postback(event):
 
     if payload == "Get Started":
         send_message(sender_id, "Welcome to NewsBot! Choose some topics that you're interested in!")
-        send_message(sender_id, "Enter how much time you have to read your articles (in minutes)!")
+        send_postback_button(sender_id)
 
     elif payload == "Tech":
-        send_message(sender_id, "tech")
-        send_generic_template(sender_id)
+        send_message(sender_id, "Enter how much time you have to read your articles (in minutes)!")
 
     else:
         send_message(sender_id, "Postback recieved")
