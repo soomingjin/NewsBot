@@ -95,17 +95,15 @@ def received_postback(event):
         send_message(sender_id, "Welcome to NewsBot! Choose some topics that you're interested in!")
         send_postback_button(sender_id)
 
-    if payload == "Tech":
-        send_message(sender_id, responseTech(payload))
+    else if payload == "Tech":
+        testclass = Newspaper(payload)
+        log("recieved")
+        testclass.build_object()
+        result = testclass.show_result()
+        send_message(sender_id, result)
 
     else:
         send_message(sender_id, "Postback recieved")
-
-def responseTech(payload):
-    testclass = Newspaper(payload)
-    log("recieved")
-    testclass.build_object()
-    testclass.show_result()
 
 def send_postback_button(recipient_id):
     log("sending postback message to {recipient}".format(recipient = recipient_id))
