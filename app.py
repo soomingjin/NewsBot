@@ -87,9 +87,9 @@ def received_postback(event):
 
     sender_id = event["sender"]["id"]
     recipient_id = event["recipient"]["id"]
-    testclass = Test("Tech")
-    testclass.build_object()
-    result = testclass.show_result()
+    # testclass = Test("Tech")
+    # testclass.build_object()
+    # result = testclass.show_result()
 
     payload = event["postback"]["payload"]
     log("received postback from {recipient} with payload {payload}".format(recipient = recipient_id, payload = payload))
