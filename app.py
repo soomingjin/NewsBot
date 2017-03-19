@@ -38,7 +38,11 @@ def webhook():
                     sender_id = messaging_event["sender"]["id"]        # the facebook ID of the person sending you the message
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
                     message_text = messaging_event["message"]["text"]  # the message's text
-                    send_message(sender_id, "got it, thanks!")
+                    if (message_text.isdigit()):
+                        send_message("You have %s minutes to read? That's short!" % message_text)
+                        send_postback_button(sender_id)
+                    else:
+                        send_message(sender_id, "got it, thanks!")
 
                 if messaging_event.get("delivery"):  # delivery confirmation
                     pass
@@ -78,11 +82,6 @@ def send_message(recipient_id, message_text):
         log(r.status_code)
         log(r.text)
 
-def time_spent_reading(recipient_id):
-    log("sending message to {recipient}".format(recipient = recipient_id))
-    send_message(sender_id, "How much time do you have to read news articles?")
-
-
 def received_postback(event):
 
     sender_id = event["sender"]["id"]
@@ -96,13 +95,64 @@ def received_postback(event):
 
     if payload == "Get Started":
         send_message(sender_id, "Welcome to NewsBot! Choose some topics that you're interested in!")
-        send_postback_button(sender_id)
+        send_message(sender_id, "Enter how much time you have to read your articles (in minutes)!")
 
     elif payload == "Tech":
         send_message(sender_id, "tech")
+        send_generic_template(sender_id)
 
     else:
         send_message(sender_id, "Postback recieved")
+def send_generic_template(recipient_id):
+    log("sending postback message to {recipient}".format(recipient = recipient_id))
+    data = json.dumps({
+  "recipient":{
+    "id":"USER_ID"
+  },
+  "message":{
+    "attachment":{
+      "type":"template",
+      "payload":{
+        "template_type":"generic",
+        "elements":[
+           {
+            "title":"Your Tech News",
+            "image_url":"https://petersfancybrownhats.com/company_image.png",
+            "subtitle":"Find out more about the latest tech",
+            "default_action": {
+              "type": "web_url",
+              "url": "https://peterssendreceiveapp.ngrok.io/view?item=103",
+              "messenger_extensions": true,
+              "webview_height_ratio": "tall",
+              "fallback_url": "https://peterssendreceiveapp.ngrok.io/"
+            },
+            "buttons":[
+              {
+                "type":"web_url",
+                "url":"https://petersfancybrownhats.com",
+                "title":"View Article"
+              },{
+                "type":"postback",
+                "title":"Lets talk!",
+                "payload":"talk"
+              }              
+            ]      
+          }
+        ]
+      }
+    }
+  }
+})
+    params = {
+        "access_token": os.environ["PAGE_ACCESS_TOKEN"]
+    }
+    headers = {
+        "Content-Type": "application/json"
+    }
+    r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=data)
+    if r.status_code != 200:
+        log(r.status_code)
+        log(r.text)
 
 def send_postback_button(recipient_id):
     log("sending postback message to {recipient}".format(recipient = recipient_id))
