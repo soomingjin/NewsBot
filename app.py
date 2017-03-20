@@ -40,7 +40,6 @@ def webhook():
                     if (message_text.isdigit()):
                         send_message(sender_id, "You have %s minutes to read? That's short!" % message_text)
                         send_generic_template(sender_id)
-                        
                     else:
                         send_message(sender_id, "got it, thanks!")
 
@@ -104,7 +103,7 @@ def send_generic_template(recipient_id):
     log("sending postback message to {recipient}".format(recipient = recipient_id))
     data = json.dumps({
   "recipient":{
-    "id":"USER_ID"
+    "id": recipient_id
   },
   "message":{
     "attachment":{
