@@ -38,8 +38,8 @@ def webhook():
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
                     message_text = messaging_event["message"]["text"]  # the message's text
                     if (message_text.isdigit()):
-                        send_message(sender_id, "You have %s minutes to read? That's short!" % message_text)
-                        send_generic_template(sender_id)
+                        send_message(sender_id, "You have %s minutes to read? That's short! Anyway, here you go!" % message_text)
+                        # send_generic_template(sender_id)
                     else:
                         send_message(sender_id, "got it, thanks!")
 
