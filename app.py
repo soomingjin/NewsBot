@@ -113,6 +113,16 @@ def received_postback(event):
         dictionary[payloadFinal] = 0
         send_message(sender_id, "Choose how much time you have to read!")
 
+    elif payload == "Politics":
+        payloadFinal = payload
+        dictionary[payloadFinal] = 0
+        send_message(sender_id, "Choose how much time you have to read!")
+
+    elif payload == "Global Affairs":
+        payloadFinal = re.sub(r"\s", "+", payload)
+        dictionary[payloadFinal] = 0
+        send_message(sender_id, "Choose how much time you have to read!")
+
     else:
         send_message(sender_id, "Postback recieved")
 
