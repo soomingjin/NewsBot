@@ -228,7 +228,7 @@ def send_feed(payload):
     stringOfTitles = ""
     for post in a.entries:
         dictOfNews[post.title] = {post.link : 0}
-        while len(stringOfTitles) <= 640:
+        if (len(stringOfTitles <= 500)):
             stringOfTitles += post.title + ", "
     return stringOfTitles
     
