@@ -217,7 +217,7 @@ def send_feed(payload):
     a = feedparser.parse("https://news.google.com/news/section?q=%s&output=rss" % payload)
     for post in a.entries:
         dictOfNews[post.title] = {post.link : 0}
-    return dictOfNews.keys()[0]
+    return dictOfNews.keys()
 
 def log(message):  # simple wrapper for logging to stdout on heroku
     print str(message)
