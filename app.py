@@ -7,6 +7,12 @@ from flask import Flask, request
 import feedparser
 
 app = Flask(__name__)
+# Current user preferences
+dictionary = dict()
+# Payload string
+payloadFinal = ""
+# Dictionary to contain info about the news. title = {link : image}
+dictOfNews = dict()
 
 @app.route('/', methods=['GET'])
 def verify():
@@ -38,10 +44,13 @@ def webhook():
                     sender_id = messaging_event["sender"]["id"]        # the facebook ID of the person sending you the message
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
                     message_text = messaging_event["message"]["text"]  # the message's text
-                    if (message_text.isdigit() and int(message_text) <= 5):
+                    if (message_text.isdigit() and int(message_text) <= 5 and dictionary[payload]):
+                        dictionary[payloadFinal] = int(message_text)
                         send_message(sender_id, "You have %s minutes to read? That's short! Anyway, here you go!" % message_text)
+                        send_message(sender_id, send_feed(payloadFinal))
+                        # To fix sending the generic template
                         # send_generic_template(sender_id)
-                    elif (message_text.isdigit() and int(message_text) <= 10 and int(message_text) > 5):
+                    elif (message_text.isdigit() and int(message_text) <= 10 and int(message_text) > 5 and dictionary[payload]):
                         send_message(sender_id, "Alright, get ready for a long read!")
                     else:
                         send_message(sender_id, "got it, thanks!")
@@ -97,12 +106,16 @@ def received_postback(event):
         send_postback_button(sender_id)
 
     elif payload == "Tech":
-        send_message(sender_id, send_feed(payload))
+        # Defines the current key value as 0
+        payload = payloadFinal
+        dictionary[payloadFinal] = 0
+        send_message(sender_id, "Choose how much time you have to read!")
 
     else:
         send_message(sender_id, "Postback recieved")
 
-def send_generic_template(recipient_id):
+# TODO: Fix up this method call to send carousels as well.
+def send_generic_template(recipient_id, array):
     log("sending postback message to {recipient}".format(recipient = recipient_id))
     data = json.dumps({
       "recipient": {
@@ -196,9 +209,12 @@ def send_postback_button(recipient_id):
     if r.status_code != 200:
         log(r.status_code)
         log(r.text)
+
+# TODO: Update send_feed with new entries for the post (currently 0 is placeholder for image values (fix regex)
 def send_feed(payload):
     a = feedparser.parse("https://news.google.com/news/section?q=%s&output=rss" % payload)
-    return a['entries'][0]['title']
+    for post in a.entries:
+        dictOfNews[post.title] = {post.link : 0}
 
 def log(message):  # simple wrapper for logging to stdout on heroku
     print str(message)
