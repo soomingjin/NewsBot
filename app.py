@@ -13,6 +13,7 @@ dictionary = dict()
 payloadFinal = ""
 # Dictionary to contain info about the news. title = {link : image}
 dictOfNews = dict()
+stringOfTitles = ""
 
 @app.route('/', methods=['GET'])
 def verify():
