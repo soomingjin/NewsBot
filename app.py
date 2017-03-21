@@ -4,7 +4,7 @@ import json
 
 import requests
 from flask import Flask, request
-from newspaper import Article
+import feedparser
 
 app = Flask(__name__)
 
@@ -97,12 +97,12 @@ def received_postback(event):
         send_postback_button(sender_id)
 
     elif payload == "Tech":
-        url = u'http://fox13now.com/2013/12/30/new-year-new-laws-obamacare-pot-guns-and-drones/'
-        article = Article(url)
-        article.download()
-        article.parse()
-        article.text
-        send_message(sender_id,  article.text)
+        a = feedparser.get("https://news.google.com/news/section?q=%s&output=rss" % payload)
+        array = []
+        for post in a.entries:
+            array.append(post.title)
+        send_message(sender_id, array[0])
+        send_message(sender_id, "Enter how much time you have to read your articles (in minutes)!")
 
     else:
         send_message(sender_id, "Postback recieved")
