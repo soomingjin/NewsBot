@@ -4,6 +4,7 @@ import json
 
 import requests
 from flask import Flask, request
+from newspaper import Article
 
 app = Flask(__name__)
 
@@ -37,9 +38,11 @@ def webhook():
                     sender_id = messaging_event["sender"]["id"]        # the facebook ID of the person sending you the message
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
                     message_text = messaging_event["message"]["text"]  # the message's text
-                    if (message_text.isdigit()):
+                    if (message_text.isdigit() and int(message_text) <= 5):
                         send_message(sender_id, "You have %s minutes to read? That's short! Anyway, here you go!" % message_text)
                         # send_generic_template(sender_id)
+                    elif (message_text.isdigit() and int(message_text) <= 10 and int(message_text) > 5):
+                        send_message(sender_id, "Alright, get ready for a long read!")
                     else:
                         send_message(sender_id, "got it, thanks!")
 
@@ -94,7 +97,12 @@ def received_postback(event):
         send_postback_button(sender_id)
 
     elif payload == "Tech":
-        send_message(sender_id, "Enter how much time you have to read your articles (in minutes)!")
+        url = u'http://fox13now.com/2013/12/30/new-year-new-laws-obamacare-pot-guns-and-drones/'
+        article = Article(url)
+        article.download()
+        article.parse()
+        article.text
+        send_message(sender_id,  article.text)
 
     else:
         send_message(sender_id, "Postback recieved")
@@ -102,43 +110,44 @@ def received_postback(event):
 def send_generic_template(recipient_id):
     log("sending postback message to {recipient}".format(recipient = recipient_id))
     data = json.dumps({
-  "recipient":{
-    "id": recipient_id
-  },
-  "message":{
-    "attachment":{
-      "type":"template",
-      "payload":{
-        "template_type":"generic",
-        "elements":[
-           {
-            "title":"Your Tech News",
-            "image_url":"https://petersfancybrownhats.com/company_image.png",
-            "subtitle":"Find out more about the latest tech",
-            "default_action": {
-              "type": "web_url",
-              "url": "https://peterssendreceiveapp.ngrok.io/view?item=103",
-              "messenger_extensions": true,
-              "webview_height_ratio": "tall",
-              "fallback_url": "https://peterssendreceiveapp.ngrok.io/"
-            },
-            "buttons":[
+      "recipient": {
+        "id": recipient_id
+      },
+      "message": {
+        "attachment": {
+          "type": "template",
+          "payload": {
+            "template_type": "generic",
+            "elements": [
               {
-                "type":"web_url",
-                "url":"https://petersfancybrownhats.com",
-                "title":"View Article"
-              },{
-                "type":"postback",
-                "title":"Lets talk!",
-                "payload":"talk"
-              }              
-            ]      
+                "title": "Your Tech News",
+                "image_url": "https://petersfancybrownhats.com/company_image.png",
+                "subtitle": "Find out more about the latest tech",
+                "default_action": {
+                  "type": "web_url",
+                  "url": "https://peterssendreceiveapp.ngrok.io/view?item=103",
+                  "messenger_extensions": true,
+                  "webview_height_ratio": "tall",
+                  "fallback_url": "https://peterssendreceiveapp.ngrok.io/"
+                },
+                "buttons": [
+                  {
+                    "type": "web_url",
+                    "url": "https://petersfancybrownhats.com",
+                    "title": "View Article"
+                  },
+                  {
+                    "type": "postback",
+                    "title": "Lets talk!",
+                    "payload": "talk"
+                  }
+                ]
+              }
+            ]
           }
-        ]
+        }
       }
-    }
-  }
-})
+    })
     params = {
         "access_token": os.environ["PAGE_ACCESS_TOKEN"]
     }
