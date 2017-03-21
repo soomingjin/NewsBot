@@ -5,6 +5,7 @@ import json
 import requests
 from flask import Flask, request
 import feedparser
+import re
 
 app = Flask(__name__)
 # Current user preferences
@@ -45,14 +46,14 @@ def webhook():
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
                     message_text = messaging_event["message"]["text"]  # the message's text
                     if (message_text.isdigit() and int(message_text) <= 5):
-                        dictionary[payloadFinal] = int(message_text)
                         send_message(sender_id, "You have %s minutes to read? That's short! Anyway, here you go!" % message_text)
+                        dictionary[payloadFinal] = int(message_text)
                         send_message(sender_id, send_feed(payloadFinal))
                         # To fix sending the generic template
                         # send_generic_template(sender_id)
                     elif (message_text.isdigit() and int(message_text) <= 10 and int(message_text) > 5):
-                        dictionary[payloadFinal] = int(message_text)
                         send_message(sender_id, "Alright, get ready for a long read!")
+                        dictionary[payloadFinal] = int(message_text)
                         send_message(sender_id, send_feed(payloadFinal))
                     else:
                         send_message(sender_id, "got it, thanks!")
