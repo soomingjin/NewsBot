@@ -97,11 +97,7 @@ def received_postback(event):
         send_postback_button(sender_id)
 
     elif payload == "Tech":
-        a = feedparser.get("https://news.google.com/news/section?q=%s&output=rss" % payload)
-        array = []
-        for post in a.entries:
-            array.append(post.title)
-        send_message(sender_id, array[0])
+        send_feed(sender_id)
         send_message(sender_id, "Enter how much time you have to read your articles (in minutes)!")
 
     else:
@@ -197,6 +193,29 @@ def send_postback_button(recipient_id):
     headers = {
         "Content-Type": "application/json"
     }
+    r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=data)
+    if r.status_code != 200:
+        log(r.status_code)
+        log(r.text)
+def send_feed(sender_id):
+    a = feedparser.get("https://news.google.com/news/section?q=%s&output=rss" % payload)
+    array = []
+    for post in a.entries:
+        array.append(post.title)
+    params = {
+        "access_token": os.environ["PAGE_ACCESS_TOKEN"]
+    }
+    headers = {
+        "Content-Type": "application/json"
+    }
+    data = json.dumps({
+        "recipient": {
+            "id": recipient_id
+        },
+        "message": {
+            "text": array[0]
+        }
+    })
     r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=data)
     if r.status_code != 200:
         log(r.status_code)
