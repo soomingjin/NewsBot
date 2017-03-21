@@ -56,7 +56,7 @@ def webhook():
                         dictionary[payloadFinal] = int(message_text)
                         send_message(sender_id, send_feed(payloadFinal))
                     else:
-                        send_message(sender_id, "got it, thanks!")
+                        send_message(sender_id, "Sorry, I didn't understand you! :(")
 
                 elif messaging_event.get("delivery"):  # delivery confirmation
                     pass
