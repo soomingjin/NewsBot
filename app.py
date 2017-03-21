@@ -97,7 +97,7 @@ def received_postback(event):
         send_postback_button(sender_id)
 
     elif payload == "Tech":
-        send_message(sender_id, send_feed())
+        send_message(sender_id, send_feed(payload))
 
     else:
         send_message(sender_id, "Postback recieved")
@@ -196,7 +196,7 @@ def send_postback_button(recipient_id):
     if r.status_code != 200:
         log(r.status_code)
         log(r.text)
-def send_feed():
+def send_feed(payload):
     a = feedparser.parse("https://news.google.com/news/section?q=%s&output=rss" % payload)
     return a['entries'][0]['title']
 
