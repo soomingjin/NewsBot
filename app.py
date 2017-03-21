@@ -225,9 +225,12 @@ def send_postback_button(recipient_id):
 # TODO: Update send_feed with new entries for the post (currently 0 is placeholder for image values (fix regex)
 def send_feed(payload):
     a = feedparser.parse("https://news.google.com/news/section?q=%s&output=rss" % payload)
+    stringOfTitles = ""
     for post in a.entries:
         dictOfNews[post.title] = {post.link : 0}
-    return dictOfNews.keys()
+        stringOfTitles += post.title + ", "
+    return stringOfTitles
+    
 
 def log(message):  # simple wrapper for logging to stdout on heroku
     print str(message)
