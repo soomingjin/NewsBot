@@ -51,7 +51,9 @@ def webhook():
                         # To fix sending the generic template
                         # send_generic_template(sender_id)
                     elif (message_text.isdigit() and int(message_text) <= 10 and int(message_text) > 5 and dictionary[payload]):
+                        dictionary[payloadFinal] = int(message_text)
                         send_message(sender_id, "Alright, get ready for a long read!")
+                        send_message(sender_id, send_feed(payloadFinal))
                     else:
                         send_message(sender_id, "got it, thanks!")
 
@@ -107,7 +109,7 @@ def received_postback(event):
 
     elif payload == "Tech":
         # Defines the current key value as 0
-        payload = payloadFinal
+        payloadFinal = payload
         dictionary[payloadFinal] = 0
         send_message(sender_id, "Choose how much time you have to read!")
 
