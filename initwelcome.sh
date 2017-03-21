@@ -21,3 +21,26 @@ curl -X POST -H "Content-Type: application/json" -d '{
     }
   ]
 }' "https://graph.facebook.com/v2.6/me/thread_settings?access_token=EAAEaTYHPhpEBAPZA8olwdCxhsZAx5ZCJgc88lnXTsEOIP5LEqJtsrhJTix9H9CXVNZCWSuN3GtzSvaTMosfIQmE4VZAjHFkKiAGjrYxyY3AoR14ZBMY2Gz6dLKV1KYBqMfVMGRZCzBqEUOflhkuBUGShg8AKdCiW4HyadTHcv0yswZDZD"
+
+# Persistent Menu
+curl -X POST -H "Content-Type: application/json" -d '{
+  "setting_type" : "call_to_actions",
+  "thread_state" : "existing_thread",
+  "call_to_actions":[
+    {
+      "type":"postback",
+      "title":"Politics",
+      "payload":"Politics"
+    },
+    {
+      "type":"postback",
+      "title":"Tech",
+      "payload":"Tech"
+    },
+    {
+      "type":"postback",
+      "title":"Global Affairs",
+      "payload":"Global Affairs"
+    },
+  ]
+}' "https://graph.facebook.com/v2.6/me/thread_settings?access_token=EAAEaTYHPhpEBAPZA8olwdCxhsZAx5ZCJgc88lnXTsEOIP5LEqJtsrhJTix9H9CXVNZCWSuN3GtzSvaTMosfIQmE4VZAjHFkKiAGjrYxyY3AoR14ZBMY2Gz6dLKV1KYBqMfVMGRZCzBqEUOflhkuBUGShg8AKdCiW4HyadTHcv0yswZDZD"    
