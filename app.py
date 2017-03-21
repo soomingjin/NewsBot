@@ -44,13 +44,13 @@ def webhook():
                     sender_id = messaging_event["sender"]["id"]        # the facebook ID of the person sending you the message
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
                     message_text = messaging_event["message"]["text"]  # the message's text
-                    if (message_text.isdigit() and int(message_text) <= 5 and dictionary[payloadFinal]):
+                    if (message_text.isdigit() and int(message_text) <= 5):
                         dictionary[payloadFinal] = int(message_text)
                         send_message(sender_id, "You have %s minutes to read? That's short! Anyway, here you go!" % message_text)
                         send_message(sender_id, send_feed(payloadFinal))
                         # To fix sending the generic template
                         # send_generic_template(sender_id)
-                    elif (message_text.isdigit() and int(message_text) <= 10 and int(message_text) > 5 and dictionary[payloadFinal]):
+                    elif (message_text.isdigit() and int(message_text) <= 10 and int(message_text) > 5):
                         dictionary[payloadFinal] = int(message_text)
                         send_message(sender_id, "Alright, get ready for a long read!")
                         send_message(sender_id, send_feed(payloadFinal))
@@ -217,7 +217,7 @@ def send_feed(payload):
     a = feedparser.parse("https://news.google.com/news/section?q=%s&output=rss" % payload)
     for post in a.entries:
         dictOfNews[post.title] = {post.link : 0}
-    return dictOfNews.keys[0]
+    return dictOfNews.keys()[0]
 
 def log(message):  # simple wrapper for logging to stdout on heroku
     print str(message)
