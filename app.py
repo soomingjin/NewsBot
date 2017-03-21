@@ -46,12 +46,14 @@ def webhook():
                     message_text = messaging_event["message"]["text"]  # the message's text
                     if (message_text.isdigit() and int(message_text) <= 5):
                         dictionary[payloadFinal] = int(message_text)
+                        stringOfTitles = ""
                         send_message(sender_id, "You have %s minutes to read? That's short! Anyway, here you go!" % message_text)
                         send_message(sender_id, send_feed(payloadFinal))
                         # To fix sending the generic template
                         # send_generic_template(sender_id)
                     elif (message_text.isdigit() and int(message_text) <= 10 and int(message_text) > 5):
                         dictionary[payloadFinal] = int(message_text)
+                        stringOfTitles = ""
                         send_message(sender_id, "Alright, get ready for a long read!")
                         send_message(sender_id, send_feed(payloadFinal))
                     else:
@@ -225,7 +227,6 @@ def send_postback_button(recipient_id):
 # TODO: Update send_feed with new entries for the post (currently 0 is placeholder for image values (fix regex)
 def send_feed(payload):
     a = feedparser.parse("https://news.google.com/news/section?q=%s&output=rss" % payload)
-    stringOfTitles = ""
     for post in a.entries:
         dictOfNews[post.title] = {post.link : 0}
         if len(stringOfTitles) <= 500:
