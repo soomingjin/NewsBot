@@ -4,7 +4,7 @@ I got really tired of browsing the web and then stumbling on to long articles an
 
 ## Getting Started
 
-You can go to [NewsBot](www.facebook.com/justanothernewsbot/) and start messaging it!
+You can go to [NewsBot](https://www.facebook.com/justanothernewsbot/) and start messaging it!
 
 ### Prerequisites
 
