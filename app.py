@@ -19,6 +19,7 @@ dictionary = dict()
 payloadFinal = ""
 # Dictionary to contain info about the news. title = {link : image}
 ultraDictOfNews = dict()
+searchQuery = ""
 
 @app.route('/', methods=['GET'])
 def verify():
@@ -49,7 +50,9 @@ def webhook():
                     # TODO: Fix payload being detected and sent into query properly
                     sender_id = messaging_event["sender"]["id"]        # the facebook ID of the person sending you the message
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
-                    message_text = messaging_event["message"]["text"]  # the message's text
+                    message_text = messaging_event["message"]["text"]
+                    if (!message_text.isdigit()):  # the message's text
+                        searchQuery += re.sub(r"\s", "+", message_text)
                     if (message_text.isdigit() and int(message_text) <= 5):
                         send_message(sender_id, "You have %s minutes to read? That's short! Anyway, here you go!" % message_text)
                         log("passed1")
@@ -64,7 +67,6 @@ def webhook():
                         send_message(sender_id, result)
                     else:
                         send_message(sender_id, "Sure, I'll find some %s articles for you!" % message_text)
-                        searchQuery = re.sub(r"\s", "+", message_text)
                         log("passed2")
                         send_message(sender_id, "Choose how much time you have to read! (in minutes)")
 
