@@ -53,17 +53,21 @@ def webhook():
                     if (message_text.isdigit() and int(message_text) <= 5):
                         send_message(sender_id, "You have %s minutes to read? That's short! Anyway, here you go!" % message_text)
                         log("value of payload final is {payload}".format(payload = payloadFinal))
-                        result = send_feed(payloadFinal, int(message_text))
+                        dictionary[searchQuery] = int(message_text)
+                        result = send_feed(searchQuery, int(message_text))
                         send_message(sender_id, result)
                         # To fix sending the generic template
                         # send_generic_template(sender_id)
-                    elif (message_text.isdigit() and int(message_text) <= 10 and int(message_text) > 5):
+                    elif (message_text.isdigit() and int(message_text) > 5):
                         send_message(sender_id, "Alright, get ready for a long read!")
                         log("value of payload final is {payload}".format(payload = payloadFinal))
                         result = send_feed(payloadFinal, int(message_text))
                         send_message(sender_id, "Alright, you'll be able to finish this article within the amount of time you've chosen! Title: %s" % result)
                     else:
-                        send_message(sender_id, "Sorry, I didn't understand you! :(")
+                        send_message(sender_id, "Sure, I'll find some %s articles for you!" % message_text)
+                        searchQuery = re.sub(r"\s", "+", message_text)
+                        dictionary[searchQuery] = 0
+                        send_message(sender_id, "Choose how much time you have to read! (in minutes)"
 
                 elif messaging_event.get("delivery"):  # delivery confirmation
                     pass
@@ -111,8 +115,7 @@ def received_postback(event):
     log("received postback from {recipient} with payload {payload}".format(recipient = recipient_id, payload = payload))
 
     if payload == "Get Started":
-        send_message(sender_id, "Welcome to NewsBot! Choose some topics that you're interested in!")
-        send_postback_button(sender_id)
+        send_message(sender_id, "Welcome to NewsBot! What do you want to read about today?")
 
     elif payload == "Tech":
         # Defines the current key value as 0
@@ -245,15 +248,12 @@ def send_feed(payload, timeToRead):
     rssFeed = feedparser.parse("https://news.google.com/news/section?q=%s&output=rss" % payload)
     for post in rssFeed.entries:
         totalRead = read_time(post.link)
-        if len(ultraDictOfNews <= 2):
-            if (totalRead <= timeToRead):
-                try:
-                    imageURL = opengraph.OpenGraph(post.link)['image']
-                except urllib2.HTTPError:
-                    imageURL = 0
-                ultraDictOfNews[post.title] = {'time':totalRead, 'image':imageURL, 'link':post.link}
-        else:
-            break
+        if (totalRead <= timeToRead):
+            try:
+                imageURL = opengraph.OpenGraph(post.link)['image']
+            except urllib2.HTTPError:
+                imageURL = 0
+            ultraDictOfNews[post.title] = {'time':totalRead, 'image':imageURL, 'link':post.link}
     randomKey = random.choice(ultraDictOfNews.keys())
     linkToArticle = ultraDictOfNews[randomKey]['link']
     stringResult = "This article is %.1f minutes: %s (Link: %s)" % (ultraDictOfNews[randomKey]['time'], randomKey, linkToArticle)
