@@ -252,7 +252,7 @@ def send_feed(payload, timeToRead):
             except urllib2.HTTPError:
                 imageURL = 0
             dictOfNews[totalRead] = {post.title : {post.link : imageURL}
-            log("updating dictOfNews {dictionary}".format(dictionary = dictOfNews[post.title]))
+            log("updating dictOfNews {dictionary}".format(dictionary = dictOfNews[totalRead]))
     randomKey = random.choice(dictOfNews.keys())
     return dictOfNews.get(randomKey).keys()[0]
 
