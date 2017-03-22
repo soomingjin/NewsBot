@@ -6,6 +6,9 @@ import requests
 from flask import Flask, request
 import feedparser
 import re
+import math
+import opengraph
+from newspaper import Article
 
 app = Flask(__name__)
 # Current user preferences
@@ -46,9 +49,10 @@ def webhook():
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
                     message_text = messaging_event["message"]["text"]  # the message's text
                     if (message_text.isdigit() and int(message_text) <= 5):
+                        timeToRead = int(message_text)
                         send_message(sender_id, "You have %s minutes to read? That's short! Anyway, here you go!" % message_text)
                         dictionary[payloadFinal] = int(message_text)
-                        send_message(sender_id, send_feed(payloadFinal))
+                        send_message(sender_id, send_feed(payloadFinal, timeToRead))
                         # To fix sending the generic template
                         # send_generic_template(sender_id)
                     elif (message_text.isdigit() and int(message_text) <= 10 and int(message_text) > 5):
@@ -224,12 +228,28 @@ def send_postback_button(recipient_id):
         log(r.text)
 
 # TODO: Update send_feed with new entries for the post (currently 0 is placeholder for image values (fix regex)
-def send_feed(payload):
-    a = feedparser.parse("https://news.google.com/news/section?q=%s&output=rss" % payload)
+def send_feed(payload, timeToRead):
+    rssFeed = feedparser.parse("https://news.google.com/news/section?q=%s&output=rss" % payload)
     stringOfTitles = ""
     for post in a.entries:
-        dictOfNews[post.title] = {post.link : 0}
-    return a['entries'][0]['title']
+        if (read_time(post.link) == timeToRead):
+            imageURL = opengraph.OpenGraph(post.link)['image']
+            dictOfNews[post.title] = {post.link : imageURL}
+            log("updating dictOfNews {dictionary}".format(dictionary = dictOfNews[post.title]))
+    return len(dictOfNews.keys())
+
+def read_time(link):
+    articleLink = Article(link)
+    articleLink.download()
+    articleLink.parse()
+    articleText = articleLink.text
+    articleText.strip().split(" ")
+    if (len(articleText) <= 275.0):
+        return 1
+    else:
+        answer = math.ceil(len(articleText) / 275.0)
+        return answer
+
     
 
 def log(message):  # simple wrapper for logging to stdout on heroku
