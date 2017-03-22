@@ -46,7 +46,7 @@ def webhook():
             for messaging_event in entry["messaging"]:
 
                 if messaging_event.get("message"):  # someone sent us a message
-
+                    # TODO: Fix payload being detected and sent into query properly
                     sender_id = messaging_event["sender"]["id"]        # the facebook ID of the person sending you the message
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
                     message_text = messaging_event["message"]["text"]  # the message's text
@@ -245,12 +245,15 @@ def send_feed(payload, timeToRead):
     rssFeed = feedparser.parse("https://news.google.com/news/section?q=%s&output=rss" % payload)
     for post in rssFeed.entries:
         totalRead = read_time(post.link)
-        if (totalRead <= timeToRead):
-            try:
-                imageURL = opengraph.OpenGraph(post.link)['image']
-            except urllib2.HTTPError:
-                imageURL = 0
-            ultraDictOfNews[post.title] = {'time':totalRead, 'image':imageURL, 'link':post.link}
+        if len(ultraDictOfNews <= 2):
+            if (totalRead <= timeToRead):
+                try:
+                    imageURL = opengraph.OpenGraph(post.link)['image']
+                except urllib2.HTTPError:
+                    imageURL = 0
+                ultraDictOfNews[post.title] = {'time':totalRead, 'image':imageURL, 'link':post.link}
+        else:
+            break
     randomKey = random.choice(ultraDictOfNews.keys())
     linkToArticle = ultraDictOfNews[randomKey]['link']
     stringResult = "This article is %.1f minutes: %s (Link: %s)" % (ultraDictOfNews[randomKey]['time'], randomKey, linkToArticle)
