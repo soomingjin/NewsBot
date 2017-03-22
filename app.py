@@ -49,11 +49,9 @@ def webhook():
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
                     message_text = messaging_event["message"]["text"]  # the message's text
                     if (message_text.isdigit() and int(message_text) <= 5):
-                        timeToRead = int(message_text)
                         send_message(sender_id, "You have %s minutes to read? That's short! Anyway, here you go!" % message_text)
-                        dictionary[payloadFinal] = int(message_text)
-                        log("dict added {dictionary}".format(dictionary = dictionary))
-                        send_message(sender_id, send_feed(payloadFinal, timeToRead))
+                        log("value of payload final is {payload}".format(payload = payloadFinal"))
+                        send_message(sender_id, send_feed(payloadFinal, int(message_text)))
                         # To fix sending the generic template
                         # send_generic_template(sender_id)
                     elif (message_text.isdigit() and int(message_text) <= 10 and int(message_text) > 5):
