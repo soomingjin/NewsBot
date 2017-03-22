@@ -251,7 +251,7 @@ def send_feed(payload, timeToRead):
                 imageURL = opengraph.OpenGraph(post.link)['image']
             except urllib2.HTTPError:
                 imageURL = 0
-            ultraDictOfNews[post.title] = {'time':answer, 'image':imageURL, 'link':post.link}
+            ultraDictOfNews[post.title] = {'time':totalRead, 'image':imageURL, 'link':post.link}
     log("passed2")
     randomKey = random.choice(ultraDictOfNews.keys())
     linkToArticle = ultraDictOfNews[randomKey]['link']
