@@ -8,6 +8,8 @@ import feedparser
 import re
 import math
 import opengraph
+import random
+import urllib2
 from newspaper import Article
 
 app = Flask(__name__)
@@ -50,14 +52,16 @@ def webhook():
                     message_text = messaging_event["message"]["text"]  # the message's text
                     if (message_text.isdigit() and int(message_text) <= 5):
                         send_message(sender_id, "You have %s minutes to read? That's short! Anyway, here you go!" % message_text)
-                        log("value of payload final is {payload}".format(payload = payloadFinal"))
-                        send_message(sender_id, send_feed(payloadFinal, int(message_text)))
+                        log("value of payload final is {payload}".format(payload = payloadFinal))
+                        result = send_feed(payloadFinal, int(message_text))
+                        send_message(sender_id, "Alright, you'll be able to finish this article within the amount of time you've chosen! Title: %s" % result)
                         # To fix sending the generic template
                         # send_generic_template(sender_id)
                     elif (message_text.isdigit() and int(message_text) <= 10 and int(message_text) > 5):
                         send_message(sender_id, "Alright, get ready for a long read!")
-                        dictionary[payloadFinal] = int(message_text)
-                        send_message(sender_id, send_feed(payloadFinal))
+                        log("value of payload final is {payload}".format(payload = payloadFinal))
+                        result = send_feed(payloadFinal, int(message_text))
+                        send_message(sender_id, "Alright, you'll be able to finish this article within the amount of time you've chosen! Title: %s" % result)
                     else:
                         send_message(sender_id, "Sorry, I didn't understand you! :(")
 
@@ -226,28 +230,33 @@ def send_postback_button(recipient_id):
         log(r.status_code)
         log(r.text)
 
-# TODO: Update send_feed with new entries for the post (currently 0 is placeholder for image values (fix regex)
-def send_feed(payload, timeToRead):
-    rssFeed = feedparser.parse("https://news.google.com/news/section?q=%s&output=rss" % payload)
-    stringOfTitles = ""
-    for post in a.entries:
-        if (read_time(post.link) == timeToRead):
-            imageURL = opengraph.OpenGraph(post.link)['image']
-            dictOfNews[post.title] = {post.link : imageURL}
-            log("updating dictOfNews {dictionary}".format(dictionary = dictOfNews[post.title]))
-    return len(dictOfNews.keys())
-
 def read_time(link):
     articleLink = Article(link)
     articleLink.download()
     articleLink.parse()
     articleText = articleLink.text
     articleText.strip().split(" ")
-    if (len(articleText) <= 275.0):
+    if (len(articleText) <= 300.0):
         return 1
     else:
-        answer = math.ceil(len(articleText) / 275.0)
+        answer = math.floor(len(articleText) / 300.0)
         return answer
+# TODO: Update send_feed with new entries for the post (currently 0 is placeholder for image values (fix regex)
+def send_feed(payload, timeToRead):
+    rssFeed = feedparser.parse("https://news.google.com/news/section?q=%s&output=rss" % payload)
+    for post in rssFeed.entries:
+        totalRead = read_time(post.link)
+        if (totalRead <= timeToRead):
+            try:
+                imageURL = opengraph.OpenGraph(post.link)['image']
+            except urllib2.HTTPError:
+                imageURL = 0
+            dictOfNews[totalRead] = {post.title : {post.link : imageURL}
+            log("updating dictOfNews {dictionary}".format(dictionary = dictOfNews[post.title]))
+    randomKey = random.choice(dictOfNews.keys())
+    return dictOfNews.get(randomKey).keys()[0]
+
+
 
     
 
