@@ -18,7 +18,6 @@ dictionary = dict()
 # Payload string
 payloadFinal = ""
 # Dictionary to contain info about the news. title = {link : image}
-dictOfNews = dict()
 ultraDictOfNews = dict()
 
 @app.route('/', methods=['GET'])
@@ -55,7 +54,7 @@ def webhook():
                         send_message(sender_id, "You have %s minutes to read? That's short! Anyway, here you go!" % message_text)
                         log("value of payload final is {payload}".format(payload = payloadFinal))
                         result = send_feed(payloadFinal, int(message_text))
-                        send_message(sender_id, "Alright, you'll be able to finish this article within the amount of time you've chosen! Title: %s" % result)
+                        send_message(sender_id, result)
                         # To fix sending the generic template
                         # send_generic_template(sender_id)
                     elif (message_text.isdigit() and int(message_text) <= 10 and int(message_text) > 5):
@@ -239,10 +238,11 @@ def read_time(link):
     if (len(splitText) <= 275.0):
         return 1.0
     else:
-        answer = math.ceil(len(articleText) / 275.0)
+        answer = math.ceil(len(splitText) / 275.0)
         return answer
 # TODO: Update send_feed with new entries for the post (currently 0 is placeholder for image values (fix regex)
 def send_feed(payload, timeToRead):
+    log("passed1")
     rssFeed = feedparser.parse("https://news.google.com/news/section?q=%s&output=rss" % payload)
     for post in rssFeed.entries:
         totalRead = read_time(post.link)
@@ -252,9 +252,11 @@ def send_feed(payload, timeToRead):
             except urllib2.HTTPError:
                 imageURL = 0
             ultraDictOfNews[post.title] = {'time':answer, 'image':imageURL, 'link':post.link}
+    log("passed2")
     randomKey = random.choice(ultraDictOfNews.keys())
     linkToArticle = ultraDictOfNews[randomKey]['link']
-    stringResult = "This article is %.1f minutes: %s (Link: %s)" % (ultraDictOfNews[randomKey]['time'], randomKey, linkToArticle )
+    log("passed3")
+    stringResult = "This article is %.1f minutes: %s (Link: %s)" % (ultraDictOfNews[randomKey]['time'], randomKey, linkToArticle)
     del ultraDictOfNews[randomKey]
     return stringResult
 
