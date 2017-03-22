@@ -242,7 +242,6 @@ def read_time(link):
         return answer
 # TODO: Update send_feed with new entries for the post (currently 0 is placeholder for image values (fix regex)
 def send_feed(payload, timeToRead):
-    log("passed1")
     rssFeed = feedparser.parse("https://news.google.com/news/section?q=%s&output=rss" % payload)
     for post in rssFeed.entries:
         totalRead = read_time(post.link)
@@ -252,10 +251,8 @@ def send_feed(payload, timeToRead):
             except urllib2.HTTPError:
                 imageURL = 0
             ultraDictOfNews[post.title] = {'time':totalRead, 'image':imageURL, 'link':post.link}
-    log("passed2")
     randomKey = random.choice(ultraDictOfNews.keys())
     linkToArticle = ultraDictOfNews[randomKey]['link']
-    log("passed3")
     stringResult = "This article is %.1f minutes: %s (Link: %s)" % (ultraDictOfNews[randomKey]['time'], randomKey, linkToArticle)
     del ultraDictOfNews[randomKey]
     return stringResult
