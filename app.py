@@ -52,6 +52,7 @@ def webhook():
                         timeToRead = int(message_text)
                         send_message(sender_id, "You have %s minutes to read? That's short! Anyway, here you go!" % message_text)
                         dictionary[payloadFinal] = int(message_text)
+                        log("dict added {dictionary}".format(dictionary = dictionary))
                         send_message(sender_id, send_feed(payloadFinal, timeToRead))
                         # To fix sending the generic template
                         # send_generic_template(sender_id)
