@@ -229,9 +229,7 @@ def send_feed(payload):
     stringOfTitles = ""
     for post in a.entries:
         dictOfNews[post.title] = {post.link : 0}
-        if len(stringOfTitles) <= 500:
-            stringOfTitles += post.title + ", "
-    return stringOfTitles
+    return a['entries'][0]['title']
     
 
 def log(message):  # simple wrapper for logging to stdout on heroku
