@@ -19,6 +19,7 @@ dictionary = dict()
 payloadFinal = ""
 # Dictionary to contain info about the news. title = {link : image}
 dictOfNews = dict()
+ultraDictOfNews = dict()
 
 @app.route('/', methods=['GET'])
 def verify():
@@ -102,7 +103,6 @@ def send_message(recipient_id, message_text):
     if r.status_code != 200:
         log(r.status_code)
         log(r.text)
-
 def received_postback(event):
 
     sender_id = event["sender"]["id"]
@@ -235,11 +235,11 @@ def read_time(link):
     articleLink.download()
     articleLink.parse()
     articleText = articleLink.text
-    articleText.strip().split(" ")
-    if (len(articleText) <= 300.0):
-        return 1
+    splitText = articleText.strip().split(" ")
+    if (len(splitText) <= 275.0):
+        return 1.0
     else:
-        answer = math.floor(len(articleText) / 300.0)
+        answer = math.ceil(len(articleText) / 275.0)
         return answer
 # TODO: Update send_feed with new entries for the post (currently 0 is placeholder for image values (fix regex)
 def send_feed(payload, timeToRead):
@@ -251,14 +251,12 @@ def send_feed(payload, timeToRead):
                 imageURL = opengraph.OpenGraph(post.link)['image']
             except urllib2.HTTPError:
                 imageURL = 0
-            dictOfNews[totalRead] = {post.title : {post.link : imageURL}}
-            log("updating dictOfNews {dictionary}".format(dictionary = dictOfNews))
-    randomKey = random.choice(dictOfNews.keys())
-    return dictOfNews.get(randomKey).keys()[0]
-
-
-
-    
+            ultraDictOfNews[post.title] = {'time':answer, 'image':imageURL, 'link':post.link}
+    randomKey = random.choice(ultraDictOfNews.keys())
+    linkToArticle = ultraDictOfNews[randomKey]['link']
+    stringResult = "This article is %.1f minutes: %s (Link: %s)" % (ultraDictOfNews[randomKey]['time'], randomKey, linkToArticle )
+    del ultraDictOfNews[randomKey]
+    return stringResult
 
 def log(message):  # simple wrapper for logging to stdout on heroku
     print str(message)
