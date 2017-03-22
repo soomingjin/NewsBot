@@ -251,8 +251,8 @@ def send_feed(payload, timeToRead):
                 imageURL = opengraph.OpenGraph(post.link)['image']
             except urllib2.HTTPError:
                 imageURL = 0
-            dictOfNews[totalRead] = {post.title : {post.link : imageURL}
-            log("updating dictOfNews {dictionary}".format(dictionary = dictOfNews[totalRead]))
+            dictOfNews[totalRead] = {post.title : {post.link : imageURL}}
+            log("updating dictOfNews {dictionary}".format(dictionary = dictOfNews))
     randomKey = random.choice(dictOfNews.keys())
     return dictOfNews.get(randomKey).keys()[0]
 
