@@ -58,6 +58,7 @@ def webhook():
                     global booledTime
                     global timeToRead
                     if not booledSearch and not booledTime:
+                        log("is this {bool}".format(bool = booledSearch))
                         searchQuery = message_text
                         booledSearch = True
                         send_message(sender_id, "Sure, I'll find some %s articles for you!" % searchQuery)
