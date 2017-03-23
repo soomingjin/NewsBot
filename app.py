@@ -58,15 +58,15 @@ def webhook():
                         searchQuery = message_text
                         global booledSearch
                         booledSearch = True
-                        send_message(sender_id, "Sure, I'll find some %s articles for you!" % message_text)
+                        send_message(sender_id, "Sure, I'll find some %i articles for you!" % timeToRead)
                         send_message(sender_id, "Choose how much time you have to read! (in minutes)")  # the message's text
-                    elif not booledTime and booledSearch:
+                    elif not booledTime and booledSearch == True:
                         global booledTime
                         booledTime = True
                         global timeToRead
                         timeToRead = int(message_text)
                     elif (timeToRead <= 5 and booledSearch):
-                        send_message(sender_id, "You have %s minutes to read? That's short! Anyway, here you go!" % message_text)
+                        send_message(sender_id, "You have %i minutes to read? That's short! Anyway, here you go!" % timeToRead)
                         result = send_feed(searchQuery, timeToRead)
                         send_message(sender_id, result)
                         send_quick_reply(sender_id)
