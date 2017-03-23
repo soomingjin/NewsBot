@@ -53,7 +53,6 @@ def webhook():
                     sender_id = messaging_event["sender"]["id"]        # the facebook ID of the person sending you the message
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
                     message_text = messaging_event["message"]["text"]
-                    log("sending {search}".format(search = searchQuery))
                     if searchQuery != True:
                         searchQuery = message_text
                         send_message(sender_id, "Sure, I'll find some %s articles for you!" % message_text)
@@ -122,6 +121,7 @@ def received_postback(event):
 
     if payload == "Get Started":
         send_message(sender_id, "Welcome to NewsBot! What do you want to read about today?")
+        log("sending {search}".format(search = searchQuery))
 
     # elif payload == "Tech":
     #     # Defines the current key value as 0
