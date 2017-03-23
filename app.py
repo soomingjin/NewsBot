@@ -56,8 +56,6 @@ def webhook():
                     sender_id = messaging_event["sender"]["id"]        # the facebook ID of the person sending you the message
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
                     message_text = messaging_event["message"]["text"]
-                    if (messaging_event["message"]["quick_reply"]):
-                        received_quick_reply(messaging_event)
                     if not booledSearch and not booledTime:
                         log("is this {bool}".format(bool = booledSearch))
                         searchQuery = message_text
@@ -87,6 +85,9 @@ def webhook():
 
                 elif messaging_event.get("postback"):  # user clicked/tapped "postback" button in earlier message
                     received_postback(messaging_event)
+
+                elif messaging_event.get("message").get("quick_reply"):
+                    received_quick_reply(messaging_event)
 
                 else:
                     log("Webhook return unknown event " + messaging_event)
