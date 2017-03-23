@@ -225,7 +225,7 @@ def send_quick_reply(recipient_id):
                     "content_type":"text",
                     "title":"Change Search Value",
                     "payload":"search"
-                }
+                },
                 {
                     "content_type":"text",
                     "title":"Change Reading Time",
