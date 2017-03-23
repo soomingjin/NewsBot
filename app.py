@@ -52,7 +52,7 @@ def webhook():
                     message_text = messaging_event["message"]["text"]
                     global searchQuery
                     global timeToRead
-                    if (len(ultraDictOfNews.keys()) == 0):
+                    if (searchQuery == False):
                         searchQuery = message_text
                         send_message(sender_id, "Sure, I'll find some %s articles for you!" % message_text)
                         send_message(sender_id, "Choose how much time you have to read! (in minutes)")  # the message's text
