@@ -19,9 +19,10 @@ payloadFinal = ""
 # Dictionary to contain info about the news. title = {link : image}
 ultraDictOfNews = dict()
 imageURL = ""
-timeToRead = None
 global timeToRead
+timeToRead = None
 global searchQuery
+searchQuery = ""
 
 @app.route('/', methods=['GET'])
 def verify():
@@ -53,7 +54,7 @@ def webhook():
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
                     message_text = messaging_event["message"]["text"]
                     
-                    if (searchQuery == ""):
+                    if not searchQuery:
                         searchQuery = message_text
                         send_message(sender_id, "Sure, I'll find some %s articles for you!" % message_text)
                         send_message(sender_id, "Choose how much time you have to read! (in minutes)")  # the message's text
