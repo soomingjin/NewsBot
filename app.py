@@ -37,7 +37,6 @@ def verify():
 def webhook():
 
     # endpoint for processing incoming messaging events
-
     data = request.get_json()
     log(data)  # you may not want to log every incoming message in production, but it's good for testing
 
@@ -68,7 +67,7 @@ def webhook():
                         # send_generic_template(sender_id)
                     elif (timeToRead > 5):
                         send_message(sender_id, "Alright, get ready for a long read!")
-                        result = send_feed(searchQuery, int(message_text))
+                        result = send_feed(searchQuery, timeToRead)
                         send_message(sender_id, result)
                         send_quick_reply(sender_id)
                     else:
