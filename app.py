@@ -51,6 +51,8 @@ def webhook():
 
         for entry in data["entry"]:
             for messaging_event in entry["messaging"]:
+                if messaging_event.get("message").get("quick_reply"):
+                    received_quick_reply(messaging_event)
                 if messaging_event.get("message"):  # someone sent us a message
                     # TODO: Fix payload being detected and sent into query properly
                     sender_id = messaging_event["sender"]["id"]        # the facebook ID of the person sending you the message
@@ -60,7 +62,7 @@ def webhook():
                         log("is this {bool}".format(bool = booledSearch))
                         searchQuery = message_text
                         booledSearch = True
-                        send_message(sender_id, "Sure, I'll find some %s articles for you!" % searchQuery)
+                        send_message(sender_id, "Sure, I'll find some articles on %s for you!" % searchQuery)
                         send_message(sender_id, "Choose how much time you have to read! (in minutes)")  # the message's text
                     elif not booledTime and booledSearch:
                         booledTime = True
@@ -80,14 +82,11 @@ def webhook():
                     else:
                         send_message(sender_id, "I don't really understand you... :(")
 
-                elif messaging_event.get("delivery"):  # delivery confirmation
+                if messaging_event.get("delivery"):  # delivery confirmation
                     pass
 
-                elif messaging_event.get("postback"):  # user clicked/tapped "postback" button in earlier message
+                if messaging_event.get("postback"):  # user clicked/tapped "postback" button in earlier message
                     received_postback(messaging_event)
-
-                elif messaging_event.get("message").get("quick_reply"):
-                    received_quick_reply(messaging_event)
 
                 else:
                     log("Webhook return unknown event " + messaging_event)
