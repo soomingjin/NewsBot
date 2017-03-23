@@ -48,7 +48,6 @@ def webhook():
     global timeToRead  # you may not want to log every incoming message in production, but it's good for testing
 
     if data["object"] == "page":
-
         for entry in data["entry"]:
             for messaging_event in entry["messaging"]:
                 if messaging_event.get("message"):  # someone sent us a message
