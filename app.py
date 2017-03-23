@@ -41,7 +41,11 @@ def webhook():
 
     # endpoint for processing incoming messaging events
     data = request.get_json()
-    log(data)  # you may not want to log every incoming message in production, but it's good for testing
+    log(data)
+    global searchQuery
+    global booledSearch
+    global booledTime
+    global timeToRead  # you may not want to log every incoming message in production, but it's good for testing
 
     if data["object"] == "page":
 
@@ -54,10 +58,6 @@ def webhook():
                     message_text = messaging_event["message"]["text"]
                     if (messaging_event["message"]["quick_reply"]):
                         received_quick_reply(messaging_event)
-                    global searchQuery
-                    global booledSearch
-                    global booledTime
-                    global timeToRead
                     if not booledSearch and not booledTime:
                         log("is this {bool}".format(bool = booledSearch))
                         searchQuery = message_text
