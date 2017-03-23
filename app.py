@@ -50,13 +50,14 @@ def webhook():
                     sender_id = messaging_event["sender"]["id"]        # the facebook ID of the person sending you the message
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
                     message_text = messaging_event["message"]["text"]
-                    global searchQuery
-                    global timeToRead
-                    if (searchQuery == False):
+                    
+                    if (searchQuery == ""):
+                        global searchQuery
                         searchQuery = message_text
                         send_message(sender_id, "Sure, I'll find some %s articles for you!" % message_text)
                         send_message(sender_id, "Choose how much time you have to read! (in minutes)")  # the message's text
                     elif (timeToRead == None and searchQuery):
+                        global timeToRead
                         timeToRead = int(message_text)
                     elif (timeToRead <= 5):
                         send_message(sender_id, "You have %s minutes to read? That's short! Anyway, here you go!" % message_text)
