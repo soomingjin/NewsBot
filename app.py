@@ -20,6 +20,8 @@ payloadFinal = ""
 ultraDictOfNews = dict()
 imageURL = ""
 timeToRead = None
+global timeToRead
+global searchQuery
 
 @app.route('/', methods=['GET'])
 def verify():
@@ -52,12 +54,10 @@ def webhook():
                     message_text = messaging_event["message"]["text"]
                     
                     if (searchQuery == ""):
-                        global searchQuery
                         searchQuery = message_text
                         send_message(sender_id, "Sure, I'll find some %s articles for you!" % message_text)
                         send_message(sender_id, "Choose how much time you have to read! (in minutes)")  # the message's text
                     elif (timeToRead == None and searchQuery):
-                        global timeToRead
                         timeToRead = int(message_text)
                     elif (timeToRead <= 5):
                         send_message(sender_id, "You have %s minutes to read? That's short! Anyway, here you go!" % message_text)
