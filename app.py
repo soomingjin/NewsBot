@@ -55,7 +55,7 @@ def webhook():
                         searchQuery = message_text
                         send_message(sender_id, "Sure, I'll find some articles on %s for you!" % searchQuery)
                         send_message(sender_id, "Choose how much time you have to read! (in minutes)")  # the message's text
-                    elif not timeToRead and searchQuery:
+                    elif (not timeToRead and searchQuery) or (timeToRead and searchQuery):
                         timeToRead = int(message_text)
                         if (timeToRead <= 5):
                             send_message(sender_id, "You have %i minutes to read? That's short! Anyway, here you go!" % timeToRead)
