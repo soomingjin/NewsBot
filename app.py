@@ -154,21 +154,25 @@ def received_quick_reply(event):
 def send_postback_button(recipient_id):
     log("sending postback message to {recipient}".format(recipient = recipient_id))
     data = json.dumps({
-        "message": {
-            "attachment": {
-                "payload": {
-                    "buttons": [
-                { "payload": "restart",
-                  "title": "Restart?",
-                  "type": "postback"
-                },
-            ],
-          }
+        "recipient":{
+            "id":"USER_ID"
+        },
+            "message":{
+                "attachment":{
+                    "type":"template",
+                    "payload":{
+                        "template_type":"button",
+                    "text":"Hmm..., looks like you're getting an error!",
+                    "buttons":[
+                        {
+                        "type":"postback",
+                        "payload":"restart",
+                        "title":"Restart?"
+                        }
+                    ]
+                }
+            }
         }
-      },
-      "recipient": {
-        "id": recipient_id
-      }
     })
     params = {
         "access_token": os.environ["PAGE_ACCESS_TOKEN"]
