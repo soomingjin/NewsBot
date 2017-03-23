@@ -21,8 +21,6 @@ ultraDictOfNews = dict()
 imageURL = ""
 timeToRead = None
 searchQuery = ""
-booledSearch = False
-booledTime = False
 
 @app.route('/', methods=['GET'])
 def verify():
@@ -43,8 +41,6 @@ def webhook():
     data = request.get_json()
     log(data)
     global searchQuery
-    global booledSearch
-    global booledTime
     global timeToRead  # you may not want to log every incoming message in production, but it's good for testing
 
     if data["object"] == "page":
@@ -55,15 +51,11 @@ def webhook():
                     sender_id = messaging_event["sender"]["id"]        # the facebook ID of the person sending you the message
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
                     message_text = messaging_event["message"]["text"]
-                    if not booledSearch:
-                        log("is this {bool}".format(bool = booledSearch))
+                    if not searchQuery and not timeToRead:
                         searchQuery = message_text
-                        booledSearch = True
                         send_message(sender_id, "Sure, I'll find some articles on %s for you!" % searchQuery)
                         send_message(sender_id, "Choose how much time you have to read! (in minutes)")  # the message's text
-                        
-                    elif not booledTime and booledSearch:
-                        booledTime = True
+                    elif not timeToRead and searchQuery:
                         timeToRead = int(message_text)
                         if (timeToRead <= 5):
                             send_message(sender_id, "You have %i minutes to read? That's short! Anyway, here you go!" % timeToRead)
