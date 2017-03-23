@@ -160,14 +160,12 @@ def received_quick_reply(event):
         send_message(sender_id, stringResult)
 
     elif payload == "search":
-        global booledSearch
         booledSearch = False
         ultraDictOfNews.clear()
         send_message(sender_id, "Alright, let's search for something else!")
         send_message(sender_id, "What would you like to search for?")
 
     elif payload == "change":
-        global booledTime
         booledTime = False
         ultraDictOfNews.clear()
         send_message(sender_id, "You'd like to change your read time eh?")
