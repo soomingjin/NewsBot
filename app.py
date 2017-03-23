@@ -60,11 +60,12 @@ def webhook():
                     if not booledSearch and not booledTime:
                         searchQuery = message_text
                         booledSearch = True
-                        send_message(sender_id, "Sure, I'll find some %i articles for you!" % timeToRead)
+                        send_message(sender_id, "Sure, I'll find some %s articles for you!" % searchQuery)
                         send_message(sender_id, "Choose how much time you have to read! (in minutes)")  # the message's text
                     elif not booledTime and booledSearch == True:
                         booledTime = True
                         timeToRead = int(message_text)
+                    elif booledTime and booledSearch:
                         if (timeToRead <= 5):
                             send_message(sender_id, "You have %i minutes to read? That's short! Anyway, here you go!" % timeToRead)
                             result = send_feed(searchQuery, timeToRead)
@@ -117,32 +118,14 @@ def send_message(recipient_id, message_text):
     if r.status_code != 200:
         log(r.status_code)
         log(r.text)
-def received_postback(event):
 
+def received_postback(event):
     sender_id = event["sender"]["id"]
     recipient_id = event["recipient"]["id"]
-
     payload = event["postback"]["payload"]
     log("received postback from {recipient} with payload {payload}".format(recipient = recipient_id, payload = payload))
-
     if payload == "Get Started":
         send_message(sender_id, "Welcome to NewsBot! What do you want to read about today?")
-
-    # elif payload == "Tech":
-    #     # Defines the current key value as 0
-    #     payloadFinal = payload
-    #     dictionary[payloadFinal] = 0
-    #     send_message(sender_id, "Choose how much time you have to read!")
-
-    # elif payload == "Politics":
-    #     payloadFinal = payload
-    #     dictionary[payloadFinal] = 0
-    #     send_message(sender_id, "Choose how much time you have to read!")
-
-    # elif payload == "Global Affairs":
-    #     payloadFinal = re.sub(r"\s", "+", payload)
-    #     dictionary[payloadFinal] = 0
-    #     send_message(sender_id, "Choose how much time you have to read!")
     else:
         send_message(sender_id, "Postback recieved")
 # TODO: Fix up this method call to send carousels as well. (sending template)
