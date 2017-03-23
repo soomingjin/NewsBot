@@ -53,7 +53,7 @@ def webhook():
                     message_text = messaging_event["message"]["text"]
                     global searchQuery
                     global timeToRead
-                    if (message_text.isdigit() == False and searchQuery == False):
+                    if (len(ultraDictOfNews.keys()) == 0):
                         log("{search}".format(search = searchQuery))
                         searchQuery = message_text
                         log("{search}".format(search = searchQuery))
@@ -157,11 +157,13 @@ def received_quick_reply(event):
 
     elif payload == "search":
         searchQuery = ""
+        ultraDictOfNews.clear()
         send_message(sender_id, "Alright, let's search for something else!")
         send_message(sender_id, "What would you like to search for?")
 
     elif payload == "change":
         timeToRead = None
+        ultraDictOfNews.clear()
         send_message(sender_id, "You'd like to change your read time eh?")
         send_message(sender_id, "Enter the new amount of time you'd like to spend reading!")
 
