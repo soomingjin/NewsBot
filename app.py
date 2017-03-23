@@ -7,7 +7,6 @@ from flask import Flask, request
 import feedparser
 import re
 import math
-import opengraph
 import random
 import urllib2
 from newspaper import Article
@@ -19,6 +18,7 @@ dictionary = dict()
 payloadFinal = ""
 # Dictionary to contain info about the news. title = {link : image}
 ultraDictOfNews = dict()
+imageURL = ""
 
 @app.route('/', methods=['GET'])
 def verify():
@@ -49,11 +49,14 @@ def webhook():
                     # TODO: Fix payload being detected and sent into query properly
                     sender_id = messaging_event["sender"]["id"]        # the facebook ID of the person sending you the message
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
-                    message_text = messaging_event["message"]["text"]  # the message's text
+                    message_text = messaging_event["message"]["text"]
+                    if (message_text.isdigit() == False):
+                        global searchQuery
+                        searchQuery = message_text  # the message's text
                     if (message_text.isdigit() and int(message_text) <= 5):
                         send_message(sender_id, "You have %s minutes to read? That's short! Anyway, here you go!" % message_text)
                         log("passed1")
-                        result = send_feed("tech", int(message_text))
+                        result = send_feed(searchQuery, int(message_text))
                         send_message(sender_id, result)
                         # To fix sending the generic template
                         # send_generic_template(sender_id)
@@ -115,78 +118,24 @@ def received_postback(event):
     if payload == "Get Started":
         send_message(sender_id, "Welcome to NewsBot! What do you want to read about today?")
 
-    elif payload == "Tech":
-        # Defines the current key value as 0
-        payloadFinal = payload
-        dictionary[payloadFinal] = 0
-        send_message(sender_id, "Choose how much time you have to read!")
+    # elif payload == "Tech":
+    #     # Defines the current key value as 0
+    #     payloadFinal = payload
+    #     dictionary[payloadFinal] = 0
+    #     send_message(sender_id, "Choose how much time you have to read!")
 
-    elif payload == "Politics":
-        payloadFinal = payload
-        dictionary[payloadFinal] = 0
-        send_message(sender_id, "Choose how much time you have to read!")
+    # elif payload == "Politics":
+    #     payloadFinal = payload
+    #     dictionary[payloadFinal] = 0
+    #     send_message(sender_id, "Choose how much time you have to read!")
 
-    elif payload == "Global Affairs":
-        payloadFinal = re.sub(r"\s", "+", payload)
-        dictionary[payloadFinal] = 0
-        send_message(sender_id, "Choose how much time you have to read!")
-
+    # elif payload == "Global Affairs":
+    #     payloadFinal = re.sub(r"\s", "+", payload)
+    #     dictionary[payloadFinal] = 0
+    #     send_message(sender_id, "Choose how much time you have to read!")
     else:
         send_message(sender_id, "Postback recieved")
-
-# TODO: Fix up this method call to send carousels as well.
-def send_generic_template(recipient_id, array):
-    log("sending postback message to {recipient}".format(recipient = recipient_id))
-    data = json.dumps({
-      "recipient": {
-        "id": recipient_id
-      },
-      "message": {
-        "attachment": {
-          "type": "template",
-          "payload": {
-            "template_type": "generic",
-            "elements": [
-              {
-                "title": "Your Tech News",
-                "image_url": "https://petersfancybrownhats.com/company_image.png",
-                "subtitle": "Find out more about the latest tech",
-                "default_action": {
-                  "type": "web_url",
-                  "url": "https://peterssendreceiveapp.ngrok.io/view?item=103",
-                  "messenger_extensions": true,
-                  "webview_height_ratio": "tall",
-                  "fallback_url": "https://peterssendreceiveapp.ngrok.io/"
-                },
-                "buttons": [
-                  {
-                    "type": "web_url",
-                    "url": "https://petersfancybrownhats.com",
-                    "title": "View Article"
-                  },
-                  {
-                    "type": "postback",
-                    "title": "Lets talk!",
-                    "payload": "talk"
-                  }
-                ]
-              }
-            ]
-          }
-        }
-      }
-    })
-    params = {
-        "access_token": os.environ["PAGE_ACCESS_TOKEN"]
-    }
-    headers = {
-        "Content-Type": "application/json"
-    }
-    r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=data)
-    if r.status_code != 200:
-        log(r.status_code)
-        log(r.text)
-
+# TODO: Fix up this method call to send carousels as well. (sending template)
 def send_postback_button(recipient_id):
     log("sending postback message to {recipient}".format(recipient = recipient_id))
     data = json.dumps({
@@ -234,6 +183,8 @@ def read_time(link):
     articleLink = Article(link)
     articleLink.download()
     articleLink.parse()
+    global topImage
+    topImage = articleLink.images[0]
     articleText = articleLink.text
     splitText = articleText.strip().split(" ")
     if (len(splitText) <= 275.0):
@@ -243,12 +194,12 @@ def read_time(link):
         return answer
 # TODO: Update send_feed with new entries for the post (currently 0 is placeholder for image values (fix regex)
 def send_feed(payload, timeToRead):
-    rssFeed = feedparser.parse("https://news.google.com/news/section?q=%s&output=rss" % payload)
+    rssFeed = feedparser.parse("https://news.google.com/news/section?q=%s&output=rss" % re.sub(r"\s", "", payload))
     for post in rssFeed.entries:
         totalRead = read_time(post.link)
         if (totalRead <= timeToRead):
             try:
-                imageURL = opengraph.OpenGraph(post.link)['image']
+                imageURL = topImage
             except urllib2.HTTPError:
                 imageURL = 0
             ultraDictOfNews[post.title] = {'time':totalRead, 'image':imageURL, 'link':post.link}
