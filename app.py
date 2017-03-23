@@ -47,14 +47,13 @@ def webhook():
 
         for entry in data["entry"]:
             for messaging_event in entry["messaging"]:
-                if messaging_event.get("message").get("quick_reply"):
-                    received_quick_reply(messaging_event)
-                    
-                elif messaging_event.get("message"):  # someone sent us a message
+                if messaging_event.get("message"):  # someone sent us a message
                     # TODO: Fix payload being detected and sent into query properly
                     sender_id = messaging_event["sender"]["id"]        # the facebook ID of the person sending you the message
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
                     message_text = messaging_event["message"]["text"]
+                    if (messaging_event["message"]["quick_reply"]):
+                        received_quick_reply(messaging_event)
                     global searchQuery
                     global booledSearch
                     global booledTime
@@ -132,7 +131,7 @@ def received_postback(event):
 def received_quick_reply(event):
     sender_id = event["sender"]["id"]
     recipient_id = event["recipient"]["id"]
-    payload = event["quick_reply"]["payload"]
+    payload = event["message"]["quick_reply"]["payload"]
     log("Received quick reply!")
     if payload == "next":
         randomKey = random.choice(ultraDictOfNews.keys())
