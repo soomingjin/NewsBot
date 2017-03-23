@@ -69,6 +69,9 @@ def webhook():
                             result = send_feed(searchQuery, timeToRead)
                             send_message(sender_id, result)
                             send_quick_reply(sender_id)
+                    elif (timeToRead and searchQuery):
+                        send_message(sender_id, "I don't really understand you... :(")
+                        send_postback_button(sender_id)
                     else:
                         send_message(sender_id, "I don't really understand you... :(")
                         send_postback_button(sender_id)
@@ -155,7 +158,7 @@ def send_postback_button(recipient_id):
     log("sending postback message to {recipient}".format(recipient = recipient_id))
     data = json.dumps({
         "recipient":{
-            "id":"USER_ID"
+            "id": recipient_id
         },
             "message":{
                 "attachment":{
