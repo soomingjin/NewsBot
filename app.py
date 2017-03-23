@@ -233,7 +233,6 @@ def send_quick_reply(recipient_id):
                 }
             ]
         }
-    }   
     })
     params = {
         "access_token": os.environ["PAGE_ACCESS_TOKEN"]
