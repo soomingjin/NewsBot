@@ -71,7 +71,7 @@ def webhook():
                             send_quick_reply(sender_id)
                         # To fix sending the generic template
                         # send_generic_template(sender_id)
-                        elif (timeToRead > 5):
+                        else:
                             send_message(sender_id, "Alright, get ready for a long read!")
                             result = send_feed(searchQuery, timeToRead)
                             send_message(sender_id, result)
