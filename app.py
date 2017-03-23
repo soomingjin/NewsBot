@@ -19,7 +19,7 @@ payloadFinal = ""
 # Dictionary to contain info about the news. title = {link : image}
 ultraDictOfNews = dict()
 imageURL = ""
-timeToRead = null
+timeToRead = None
 
 @app.route('/', methods=['GET'])
 def verify():
@@ -57,7 +57,7 @@ def webhook():
                         searchQuery = message_text
                         send_message(sender_id, "Sure, I'll find some %s articles for you!" % message_text)
                         send_message(sender_id, "Choose how much time you have to read! (in minutes)")  # the message's text
-                    elif (timeToRead == null and searchQuery):
+                    elif (timeToRead == None and searchQuery):
                         timeToRead = int(message_text)
                     elif (timeToRead <= 5):
                         send_message(sender_id, "You have %s minutes to read? That's short! Anyway, here you go!" % message_text)
@@ -159,7 +159,7 @@ def received_quick_reply(event):
         send_message(sender_id, "What would you like to search for?")
 
     elif payload == "change":
-        timeToRead = null
+        timeToRead = None
         send_message(sender_id, "You'd like to change your read time eh?")
         send_message(sender_id, "Enter the new amount of time you'd like to spend reading!")
 
