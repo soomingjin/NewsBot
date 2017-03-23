@@ -19,10 +19,10 @@ payloadFinal = ""
 # Dictionary to contain info about the news. title = {link : image}
 ultraDictOfNews = dict()
 imageURL = ""
-global timeToRead
 timeToRead = None
-global searchQuery
 searchQuery = ""
+booledSearch = False
+booledTime = False
 
 @app.route('/', methods=['GET'])
 def verify():
@@ -53,20 +53,26 @@ def webhook():
                     sender_id = messaging_event["sender"]["id"]        # the facebook ID of the person sending you the message
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
                     message_text = messaging_event["message"]["text"]
-                    if searchQuery != True:
+                    if not booledSearch:
+                        global searchQuery
                         searchQuery = message_text
+                        global booledSearch
+                        booledSearch = True
                         send_message(sender_id, "Sure, I'll find some %s articles for you!" % message_text)
                         send_message(sender_id, "Choose how much time you have to read! (in minutes)")  # the message's text
-                    elif (timeToRead == None and searchQuery):
+                    elif not booledTime and booledSearch:
+                        global booledTime
+                        booledTime = True
+                        global timeToRead
                         timeToRead = int(message_text)
-                    elif (timeToRead <= 5 and searchQuery):
+                    elif (timeToRead <= 5 and booledSearch):
                         send_message(sender_id, "You have %s minutes to read? That's short! Anyway, here you go!" % message_text)
                         result = send_feed(searchQuery, timeToRead)
                         send_message(sender_id, result)
                         send_quick_reply(sender_id)
                         # To fix sending the generic template
                         # send_generic_template(sender_id)
-                    elif (timeToRead > 5 and searchQuery):
+                    elif (timeToRead > 5 and booledSearch):
                         send_message(sender_id, "Alright, get ready for a long read!")
                         result = send_feed(searchQuery, timeToRead)
                         send_message(sender_id, result)
@@ -121,8 +127,6 @@ def received_postback(event):
 
     if payload == "Get Started":
         send_message(sender_id, "Welcome to NewsBot! What do you want to read about today?")
-        searchQuery = "hahaha"
-        log("sending {search}".format(search = searchQuery))
 
     # elif payload == "Tech":
     #     # Defines the current key value as 0
@@ -156,13 +160,15 @@ def received_quick_reply(event):
         send_message(sender_id, stringResult)
 
     elif payload == "search":
-        searchQuery = ""
+        global booledSearch
+        booledSearch = False
         ultraDictOfNews.clear()
         send_message(sender_id, "Alright, let's search for something else!")
         send_message(sender_id, "What would you like to search for?")
 
     elif payload == "change":
-        timeToRead = None
+        global booledTime
+        booledTime = False
         ultraDictOfNews.clear()
         send_message(sender_id, "You'd like to change your read time eh?")
         send_message(sender_id, "Enter the new amount of time you'd like to spend reading!")
