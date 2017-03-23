@@ -121,6 +121,7 @@ def received_postback(event):
 
     if payload == "Get Started":
         send_message(sender_id, "Welcome to NewsBot! What do you want to read about today?")
+        searchQuery = "hahaha"
         log("sending {search}".format(search = searchQuery))
 
     # elif payload == "Tech":
