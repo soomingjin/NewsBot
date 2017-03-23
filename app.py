@@ -53,7 +53,7 @@ def webhook():
                     if (message_text.isdigit() and int(message_text) <= 5):
                         send_message(sender_id, "You have %s minutes to read? That's short! Anyway, here you go!" % message_text)
                         log("passed1")
-                        result = send_feed(searchQuery, int(message_text))
+                        result = send_feed("tech", int(message_text))
                         send_message(sender_id, result)
                         # To fix sending the generic template
                         # send_generic_template(sender_id)
