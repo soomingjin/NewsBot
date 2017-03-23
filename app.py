@@ -54,20 +54,20 @@ def webhook():
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
                     message_text = messaging_event["message"]["text"]
                     
-                    if not searchQuery:
+                    if searchQuery != True:
                         searchQuery = message_text
                         send_message(sender_id, "Sure, I'll find some %s articles for you!" % message_text)
                         send_message(sender_id, "Choose how much time you have to read! (in minutes)")  # the message's text
                     elif (timeToRead == None and searchQuery):
                         timeToRead = int(message_text)
-                    elif (timeToRead <= 5):
+                    elif (timeToRead <= 5 and searchQuery):
                         send_message(sender_id, "You have %s minutes to read? That's short! Anyway, here you go!" % message_text)
                         result = send_feed(searchQuery, timeToRead)
                         send_message(sender_id, result)
                         send_quick_reply(sender_id)
                         # To fix sending the generic template
                         # send_generic_template(sender_id)
-                    elif (timeToRead > 5):
+                    elif (timeToRead > 5 and searchQuery):
                         send_message(sender_id, "Alright, get ready for a long read!")
                         result = send_feed(searchQuery, timeToRead)
                         send_message(sender_id, result)
