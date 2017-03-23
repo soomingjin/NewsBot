@@ -55,7 +55,7 @@ def webhook():
                         searchQuery = message_text
                         send_message(sender_id, "Sure, I'll find some articles on %s for you!" % searchQuery)
                         send_message(sender_id, "Choose how much time you have to read! (in minutes)")  # the message's text
-                    elif (not timeToRead and searchQuery) or (timeToRead and searchQuery):
+                    elif (not timeToRead and searchQuery):
                         timeToRead = int(message_text)
                         if (timeToRead <= 5):
                             send_message(sender_id, "You have %i minutes to read? That's short! Anyway, here you go!" % timeToRead)
@@ -71,6 +71,7 @@ def webhook():
                             send_quick_reply(sender_id)
                     else:
                         send_message(sender_id, "I don't really understand you... :(")
+                        send_postback_button(sender_id)
 
                 elif messaging_event.get("delivery"):  # delivery confirmation
                     pass
@@ -117,6 +118,10 @@ def received_postback(event):
     log("received postback from {recipient} with payload {payload}".format(recipient = recipient_id, payload = payload))
     if payload == "Get Started":
         send_message(sender_id, "Welcome to NewsBot! What do you want to read about today?")
+    elif payload == 'restart':
+        searchQuery = ""
+        timeToRead = None
+        send_message(sender_id, "Welcome to NewsBot! What do you want to read about today?")
     else:
         send_message(sender_id, "Postback recieved")
 # TODO: Fix up this method call to send carousels as well. (sending template)
@@ -153,25 +158,12 @@ def send_postback_button(recipient_id):
             "attachment": {
                 "payload": {
                     "buttons": [
-                    {   
-                        "payload": "Tech",
-                        "type": "postback",
-                        "title": "Tech"
-                    },
-                {
-                    "payload": "Politics",
-                    "title": "Politics",
-                    "type": "postback"
-                }, 
-                { "payload": "Global Affairs",
-                  "title": "Global Affairs",
+                { "payload": "restart",
+                  "title": "Restart?",
                   "type": "postback"
                 },
             ],
-            "template_type": "button",
-            "text": "What categories are you interested in?"
-          },
-          "type": "template"
+          }
         }
       },
       "recipient": {
