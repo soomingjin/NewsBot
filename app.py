@@ -1,7 +1,6 @@
 import os
 import sys
 import json
-
 import requests
 from flask import Flask, request
 import feedparser
@@ -40,8 +39,9 @@ def webhook():
     # endpoint for processing incoming messaging events
     data = request.get_json()
     log(data)
+    # global fields for variables
     global searchQuery
-    global timeToRead  # you may not want to log every incoming message in production, but it's good for testing
+    global timeToRead
 
     if data["object"] == "page":
         for entry in data["entry"]:
@@ -115,6 +115,10 @@ def send_message(recipient_id, message_text):
         log(r.text)
 
 def received_postback(event):
+    # Handling for global variables
+    global timeToRead
+    global searchQuery
+
     sender_id = event["sender"]["id"]
     recipient_id = event["recipient"]["id"]
     payload = event["postback"]["payload"]
@@ -130,10 +134,11 @@ def received_postback(event):
 # TODO: Fix up this method call to send carousels as well. (sending template)
 
 def received_quick_reply(event):
+    global ultraDictOfNews
+    
     sender_id = event["sender"]["id"]
     recipient_id = event["recipient"]["id"]
     payload = event["message"]["quick_reply"]["payload"]
-    log("Received quick reply!")
     if payload == "next":
         randomKey = random.choice(ultraDictOfNews.keys())
         linkToArticle = ultraDictOfNews[randomKey]['link']
@@ -231,9 +236,11 @@ def read_time(link):
     articleLink.download()
     articleLink.parse()
     global topImage
-    topImage = articleLink.images[0]
+    # To retrieve the image article
+    # topImage = articleLink.images[0]
     articleText = articleLink.text
     splitText = articleText.strip().split(" ")
+    # Checking length of article
     if (len(splitText) <= 275.0):
         return 1.0
     else:
