@@ -35,7 +35,6 @@ def verify():
 
 @app.route('/', methods=['POST'])
 def webhook():
-
     # endpoint for processing incoming messaging events
     data = request.get_json()
     log(data)
@@ -56,22 +55,24 @@ def webhook():
                         send_message(sender_id, "Sure, I'll find some articles on %s for you!" % searchQuery)
                         send_message(sender_id, "Choose how much time you have to read! (in minutes)")  # the message's text
                     elif (not timeToRead and searchQuery):
-                        timeToRead = int(message_text)
-                        if (timeToRead <= 5):
-                            send_message(sender_id, "You have %i minutes to read? That's short! Anyway, here you go!" % timeToRead)
-                            result = send_feed(searchQuery, timeToRead)
-                            send_message(sender_id, result)
-                            send_quick_reply(sender_id)
-                        # To fix sending the generic template
-                        # send_generic_template(sender_id)
-                        else:
-                            send_message(sender_id, "Alright, get ready for a long read!")
-                            result = send_feed(searchQuery, timeToRead)
-                            send_message(sender_id, result)
-                            send_quick_reply(sender_id)
-                    elif (timeToRead and searchQuery):
-                        send_message(sender_id, "I don't really understand you... :(")
-                        send_postback_button(sender_id)
+                        try:
+                            timeToRead = int(message_text)
+                            if (timeToRead <= 5):
+                                send_message(sender_id, "You have %i minutes to read? That's short! Anyway, here you go!" % timeToRead)
+                                result = send_feed(searchQuery, timeToRead)
+                                send_message(sender_id, result)
+                                send_quick_reply(sender_id)
+                            # To fix sending the generic template
+                            # send_generic_template(sender_id)
+                            elif (timeToRead > 5):
+                                send_message(sender_id, "Alright, get ready for a long read!")
+                                result = send_feed(searchQuery, timeToRead)
+                                send_message(sender_id, result)
+                                send_quick_reply(sender_id)
+                        except ValueError:
+                            send_message(sender_id, "Whoops, you entered an invalid time!")
+                    # TODO: Proper error handling, means if user receives that message
+                    # must do something to help the user know where he is geting an error at
                     else:
                         send_message(sender_id, "I don't really understand you... :(")
                         send_postback_button(sender_id)
@@ -135,7 +136,8 @@ def received_postback(event):
 
 def received_quick_reply(event):
     global ultraDictOfNews
-    
+    global timeToRead
+    global searchQuery
     sender_id = event["sender"]["id"]
     recipient_id = event["recipient"]["id"]
     payload = event["message"]["quick_reply"]["payload"]
@@ -147,14 +149,14 @@ def received_quick_reply(event):
         send_message(sender_id, stringResult)
 
     elif payload == "search":
-        booledSearch = False
+        searchQuery = ""
         ultraDictOfNews.clear()
         send_message(sender_id, "Alright, let's search for something else!")
         send_message(sender_id, "What would you like to search for?")
 
     elif payload == "change":
-        booledTime = False
         ultraDictOfNews.clear()
+        timeToRead = None
         send_message(sender_id, "You'd like to change your read time eh?")
         send_message(sender_id, "Enter the new amount of time you'd like to spend reading!")
 
@@ -209,7 +211,7 @@ def send_quick_reply(recipient_id):
                 },
                 {
                     "content_type":"text",
-                    "title":"Change Search Value",
+                    "title":"New Topic",
                     "payload":"search"
                 },
                 {
@@ -248,6 +250,7 @@ def read_time(link):
         return answer
 # TODO: Update send_feed with new entries for the post (currently 0 is placeholder for image values (fix regex)
 def send_feed(payload, timeToRead):
+    global imageURL
     rssFeed = feedparser.parse("https://news.google.com/news/section?q=%s&output=rss" % re.sub(r"\s", "", payload))
     for post in rssFeed.entries:
         totalRead = read_time(post.link)
@@ -255,7 +258,7 @@ def send_feed(payload, timeToRead):
             try:
                 imageURL = topImage
             except urllib2.HTTPError:
-                imageURL = 0
+                imageURL = ""
             ultraDictOfNews[post.title] = {'time':totalRead, 'image':imageURL, 'link':post.link}
     randomKey = random.choice(ultraDictOfNews.keys())
     linkToArticle = ultraDictOfNews[randomKey]['link']
