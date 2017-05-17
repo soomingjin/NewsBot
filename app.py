@@ -117,8 +117,8 @@ def send_message(recipient_id, message_text):
 
 def received_postback(event):
     # Handling for global variables
-    global timeToRead
-    global searchQuery
+    # global timeToRead
+    # global searchQuery
 
     sender_id = event["sender"]["id"]
     recipient_id = event["recipient"]["id"]
