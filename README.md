@@ -1,6 +1,6 @@
 # NewsBot
 
-I got really tired of browsing the web and then stumbling on to long articles and so I decided, why not build a bot that helps me scour the web for the latest news, as well as helping me find news articles that help me to find short or long articles, based on how much time I want to spend reading.
+I got really tired of browsing the web and then stumbling on to long articles and so I decided, why not build a bot that helps me scour the web for the latest news, as well as helping me find news articles that help me to find short or long articles, based on how much time I want to spend reading. :D
 
 ## Getting Started
 
